@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-8">
+                <img style="width: 80%; height: 80%;" src="res/images/mainimge.png" alt=""
+                    class="d-inline-block align-text-top">
+            </div>
+            <div class="col-4">
+                <h1 class="display-1">Login</h1>
+,            </div>
+             <form action="{% url 'login_user' %}" method="post">
+            {% csrf_token %}
+                {{ form.as_p }}
+            <input type="submit" class='btn btn-primary mt-3 btn-lg btn-block'value="Submit">
+            </form>
+        </div>
+    </div>
+{% endblock %}

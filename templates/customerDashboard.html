@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p>{{ request.session.user_type }}</p>
+    {% if request.session.user_type == 'customer' %}
+    <p>dhjshf</p>
+        {% else %}
+        <p>hsjfdh</p>
+    {% endif %}
+
+{% endblock %}
