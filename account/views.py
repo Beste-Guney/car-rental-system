@@ -35,7 +35,7 @@ def createEmployeeTable():
 def createBranchEmployeeTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists branch_employee(user_id int not null auto_increment, '
+        'create table if not exists branch_employee(user_id int not null, '
         U'years_of_work int, foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
 
     return 'Branch employee table created'
@@ -44,7 +44,7 @@ def createBranchEmployeeTable():
 def createDamageExpertTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists damage_expertise(user_id int not null auto_increment, '
+        'create table if not exists damage_expertise(user_id int not null, '
         U'interest_car_type varchar(50), foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
 
     return 'Damage Expert table created'
@@ -53,7 +53,7 @@ def createDamageExpertTable():
 def createManagerTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists manager(user_id int not null auto_increment, '
+        'create table if not exists manager(user_id int not null, '
         U'years_of_management int, foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
 
     return 'Manager table created'
@@ -62,10 +62,43 @@ def createManagerTable():
 def createChauffeurTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists chauffeur(user_id int not null auto_increment, '
+        'create table if not exists chauffeur(user_id int not null, '
         U'drive_car_type varchar(50), driving_years int, foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
 
     return 'Chauffeur table created'
+
+
+def createBranchTable():
+    cursor = connection.cursor()
+    cursor.execute(
+        'create table if not exists branch(branch_id int not null auto_increment, '
+        U'budget int, branch_name varchar(20), manager_id int, city varchar(20), foreign key(manager_id) references manager(user_id) on update cascade, primary key(branch_id))engine=InnoDB;')
+
+    return 'Branch table created'
+
+
+# methods to insert into some necessary tables
+def insertIntoBranch(branch, budget, city):
+    cursor = connection.cursor()
+    cursor.execute('insert into branch(branch_name, budget, city) values(' + branch + ',' + budget + ',' + city + ');')
+
+
+def insertIntoEmployee(name, salary, branch_id):
+    cursor = connection.cursor()
+    cursor.execute('insert into employee(employee_name, salary, branch_id) values(' + name + ',' + salary + ',' + branch_id + ');')
+
+def insertIntoManager(years, id):
+    cursor = connection.cursor()
+    cursor.execute(
+        'insert into manager(years_of_management, user_id) values(' + years + ',' + id + ');')
+
+
+#adding foreign key to employee
+def alterEmployee():
+    cursor = connection.cursor()
+    cursor.execute(
+        'alter table employee add branch_id int;'
+        'alter table employee add foreign key (branch_id) references branch(branch_id);')
 
 
 class RegisterCustomer(View):
@@ -126,6 +159,9 @@ class LoginView(View):
     createBranchEmployeeTable()
     createManagerTable()
     createDamageExpertTable()
+    createChauffeurTable()
+    createBranchTable()
+    #alterEmployee()
 
     #post request
     def post(self, request):
@@ -177,6 +213,7 @@ class LoginView(View):
                             request.session['user_type'] = 'damage_expert'
                     else:
                         request.session['user_type'] = 'manager'
+                        return redirect('manager:manager_dashboard', manager_id = user_id)
                 else:
                     request.session['user_type'] = 'branch_employee'
                 desc = cursor.fetchall()

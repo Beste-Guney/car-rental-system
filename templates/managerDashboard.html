@@ -1,0 +1,10 @@
+{% extends 'baseManager.html' %}
+{% block content %}
+
+    {% if request.session.user_type == 'manager' %}
+
+
+    {% else %}
+        <p>You cannot access this page</p>
+    {% endif %}
+{% endblock %}
