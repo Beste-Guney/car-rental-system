@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +21,7 @@
 <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container-fluid">
-            <img src="/templates/media/icon.png" alt="" width="50" height="50" class="d-inline-block align-text-top">
+            <img src="{% static 'icon.png' %}" alt="" width="50" height="50" class="d-inline-block align-text-top">
             <a class="navbar-brand" href="#">CaRent</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,10 +33,10 @@
                         <a class="nav-link active" aria-current="page" href="/management/branchCars/{{ branch_id }}">{{ branch_name }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="login.html">Employees</a>
+                        <a class="nav-link active" aria-current="page" href="/management/employeeList/{{ branch_id }}">Employees</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/management/buyCar">Buy Car</a>
+                        <a class="nav-link active" aria-current="page" href="/management/buyCar/{{ branch_id }}">Buy Car</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="login.html">Logout</a>

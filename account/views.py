@@ -27,7 +27,7 @@ def createEmployeeTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists employee(user_id int not null auto_increment, '
-        U'salary varchar(50), employee_name varchar(50), foreign key(user_id) references User(user_id), primary key(user_id))engine=InnoDB;')
+        U'salary numeric(8,2), employee_name varchar(50), foreign key(user_id) references User(user_id), primary key(user_id))engine=InnoDB;')
 
     return 'Employee table created'
 

@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
 from django.views.generic.list import ListView
 from django.http import JsonResponse
+from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, DamageExpertCreationForm
 
 # Create your views here.
 def createModelBrandTable():
@@ -32,6 +33,7 @@ class ManagerMainPage(View):
         result = cursor.fetchall()
         result = result[0]
         branch_id = result[3]
+        employee_name = result[2]
 
         #finding the branch
         cursor.execute(
@@ -41,7 +43,7 @@ class ManagerMainPage(View):
         result = result[0]
         branch_name = result[2]
 
-        return render(request, 'managerDashboard.html', {'branch_id' : branch_id, 'branch_name':branch_name })
+        return render(request, 'managerDashboard.html', {'branch_id' : branch_id, 'branch_name':branch_name , 'name':employee_name})
 
 
 class BranchCarView(View):
@@ -59,10 +61,18 @@ class BranchCarView(View):
         for car in result:
             item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
             vehicle_info.append(item_detail)
-        return render(request, 'branchCarsManaager.html', {'vehicles':vehicle_info})
+
+        cursor.execute(
+            'select branch_name from branch where branch_id=\'' + str(branch_id) + '\''
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        name = result[0]
+        return render(request, 'branchCarsManaager.html', {'vehicles':vehicle_info, 'name': name, 'branch_id' : branch_id})
+
 
 class BuyCarView(View):
-    def get(self, request):
+    def get(self, request, branch_id):
         cursor = connection.cursor()
         cursor.execute(
             'select * from vehicle where status=\'unavailable\''
@@ -73,7 +83,7 @@ class BuyCarView(View):
         for car in result:
             item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
             vehicle_info.append(item_detail)
-        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info})
+        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info, 'branch_id' : branch_id})
 
 def ajaxBuyCar(request):
     print('called')
@@ -122,3 +132,257 @@ def ajaxBuyCar(request):
     return JsonResponse(data)
 
 
+def findEmployeeType(id):
+    cursor = connection.cursor()
+    cursor.execute(
+        'select * from branch_employee where user_id=' + str(id) + ';'
+    )
+    result = cursor.fetchall()
+    if len(result) == 0:
+        cursor.execute(
+            'select * from chauffeur where user_id=' + str(id) + ';'
+        )
+        result = cursor.fetchall()
+        if len(result) == 0:
+            return 'damage_expertise'
+        else:
+            return 'chauffeur'
+    else:
+        return 'branch_employee'
+
+
+class EmployeeView(View):
+
+    def get(self, request, branch_id):
+        #fetching all employees at that branch
+        cursor = connection.cursor()
+        cursor.execute(
+            'select * from employee where branch_id=' + str(branch_id) + ' and user_id <>' + str(request.session['logged_in_user']) + ';'
+        )
+        result = cursor.fetchall()
+
+        employee_list = []
+
+        for emp in result:
+            type = findEmployeeType(emp[0])
+            employee_info = [emp[0], emp[1], emp[2], type]
+            employee_list.append(employee_info)
+
+        cursor.execute(
+            'select branch_name from branch where branch_id=\'' + str(branch_id) + '\''
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        name = result[0]
+
+        return render(request, 'branchEmployee.html', {'employees': employee_list, 'name':name,'branch_id' : branch_id})
+
+
+class AddBranchEmployeeView(View):
+    def post(self, request):
+
+        # getting current branch
+        cursor = connection.cursor()
+        cursor.execute(
+            'select * from employee where user_id=' + str(
+                request.session['logged_in_user']) + ';'
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        branch_id = result[3]
+
+        # taking form values
+        form = BranchEmployeeCreationForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            salary = form.cleaned_data['salary']
+            address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+
+            cursor = connection.cursor()
+            cursor.execute(
+                'insert into user(email, password, address, phone_number) values(\'' + email + '\',\'' + password + '\',\'' + address + '\',\'' + phone_number + '\');'
+            )
+
+            cursor2 = connection.cursor()
+            cursor2.execute(
+                'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
+            )
+            desc = cursor2.fetchall()
+            desc = desc[0]
+            user_id = desc[0]
+
+            #inserting into employee tables
+            print( 'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );'
+)
+            cursor.execute(
+                'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );' )
+
+            cursor.execute(
+                'insert into branch_employee(user_id, years_of_work) values(' + str(
+                    user_id) + ',' + str(0) + ');'
+            )
+            return redirect('manager:branch-employees', branch_id)
+
+        else:
+            form = BranchEmployeeCreationForm()
+            context = {'form': form}
+            return render(request, 'managerAddBranchEmployee.html', context)
+
+    def get(self, request):
+        # getting current branch
+        cursor = connection.cursor()
+        cursor.execute(
+            'select * from employee where user_id=' + str(
+                request.session['logged_in_user']) + ';'
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        branch_id = result[3]
+        form = BranchEmployeeCreationForm()
+        context = {'form': form, 'branch_id': branch_id}
+        return render(request, 'managerAddBranchEmployee.html', context)
+
+
+class AddChauffeurView(View):
+    def post(self, request):
+
+        # getting current branch
+        cursor = connection.cursor()
+        cursor.execute(
+            'select * from employee where user_id=' + str(
+                request.session['logged_in_user']) + ';'
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        branch_id = result[3]
+
+        # taking form values
+        form = ChauffeurCreationForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            salary = form.cleaned_data['salary']
+            address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+            car_type = form.cleaned_data['car_type']
+            years = form.cleaned_data['years']
+
+            cursor = connection.cursor()
+            cursor.execute(
+                'insert into user(email, password, address, phone_number) values(\'' + email + '\',\'' + password + '\',\'' + address + '\',\'' + phone_number + '\');'
+            )
+
+            cursor2 = connection.cursor()
+            cursor2.execute(
+                'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
+            )
+            desc = cursor2.fetchall()
+            desc = desc[0]
+            user_id = desc[0]
+
+            #inserting into employee tables
+            cursor.execute(
+                'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );')
+
+            cursor.execute(
+                'insert into chauffeur(user_id, drive_car_type, driving_years) values(' + str(
+                    user_id) + ',\'' + car_type + '\',' + str(years) + ');'
+            )
+            return redirect('manager:branch-employees', branch_id)
+
+        else:
+            form = ChauffeurCreationForm()
+            context = {'form': form}
+            return render(request, 'managerAddChauffeur.html', context)
+
+    def get(self, request):
+        # getting current branch
+        cursor = connection.cursor()
+        cursor.execute(
+            'select * from employee where user_id =' + str(
+                request.session['logged_in_user']) + ';'
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        branch_id = result[3]
+
+        form = ChauffeurCreationForm()
+        context = {'form': form, 'branch_id': branch_id}
+        return render(request, 'managerAddChauffeur.html', context)
+
+
+class AddDamageExpertView(View):
+    def post(self, request):
+
+        # getting current branch
+        cursor = connection.cursor()
+        cursor.execute(
+            'select * from employee where user_id =' + str(
+                request.session['logged_in_user']) + ';'
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        branch_id = result[3]
+
+        # taking form values
+        form = DamageExpertCreationForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            salary = form.cleaned_data['salary']
+            address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+            car_type = form.cleaned_data['car_type']
+
+            cursor = connection.cursor()
+            cursor.execute(
+                'insert into user(email, password, address, phone_number) values(\'' + email + '\',\'' + password + '\',\'' + address + '\',\'' + phone_number + '\');'
+            )
+
+            cursor2 = connection.cursor()
+            cursor2.execute(
+                'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
+            )
+            desc = cursor2.fetchall()
+            desc = desc[0]
+            user_id = desc[0]
+
+            #inserting into employee tables
+            cursor.execute(
+                'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );')
+
+            cursor.execute(
+                'insert into damage_expertise(user_id, interest_car_type) values(' + str(
+                    user_id) + ',\'' + car_type + '\');'
+            )
+            return redirect('manager:branch-employees' , branch_id)
+
+        else:
+            form = DamageExpertCreationForm()
+            context = {'form': form}
+            return render(request, 'managerAddDamageExpert.html', context)
+
+    def get(self, request):
+        # getting current branch
+        cursor = connection.cursor()
+        cursor.execute(
+            'select * from employee where user_id =' + str(
+                request.session['logged_in_user']) + ';'
+        )
+        result = cursor.fetchall()
+        result = result[0]
+        branch_id = result[3]
+        form = DamageExpertCreationForm()
+        context = {'form': form, 'branch_id': branch_id}
+        return render(request, 'managerAddDamageExpert.html', context)
