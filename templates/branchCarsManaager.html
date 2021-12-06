@@ -1,4 +1,5 @@
 {% extends 'baseManager.html' %}
+{% load static %}
 {% block content %}
     <div class="container">
         <div class="row mt-5">
@@ -60,7 +61,7 @@
                 {% if forloop.counter|divisibleby:"5" %}
                     <div class="row mt-4">
                                     <div class="col-sm">
-                    <img style="text-align: center;" src="res/images/vehiclesImages/car1.jpeg" width="150" height="150"
+                    <img style="text-align: center;" src="{% static 'car1.jpeg' %}" width="150" height="150"
                         alt="">
                     <p class="mt-2 m-1 "><b>Plate: </b>{{ car.0 }}</p>
                     <p class="m-1"><b>Daily Price: </b> {{ car.2}}</p>
@@ -71,7 +72,7 @@
                 </div>
                     {% else %}
                                     <div class="col-sm">
-                    <img style="text-align: center;" src="res/images/vehiclesImages/car1.jpeg" width="150" height="150"
+                    <img style="text-align: center;" src="{% static 'car2.jpeg' %}" width="150" height="150"
                         alt="">
                     <p class="mt-2 m-1 "><b>Plate: </b>{{ car.0 }}</p>
                     <p class="m-1"><b>Daily Price: </b> {{ car.2}}</p>

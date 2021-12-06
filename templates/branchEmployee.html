@@ -1,8 +1,9 @@
 {% extends 'baseManager.html' %}
+{% load static %}
 {% block content %}
     <div class="container">
         <div class="row mt-5">
-            <div class="row">
+            <div class="row" style="margin-bottom: 30px">
                 <div class="col-sm-12">
                     <h1>Employees at {{ name }}</h1>
                     <a class="btn btn-success" href="/management/addBranchEmployee/" role="button">Add Branch Employee</a>
@@ -14,7 +15,7 @@
                 {% if forloop.counter|divisibleby:"5" %}
                     <div class="row mt-4">
                                     <div class="col-sm">
-                    <img style="text-align: center;" src="res/images/vehiclesImages/car1.jpeg" width="150" height="150"
+                    <img style="text-align: center;" src="{% static '147140.png' %}" width="150" height="150"
                         alt="">
                     <p class="mt-2 m-1 "><b>Name: </b>{{ empl.2 }}</p>
                     <p class="m-1"><b>Job: </b> {{ empl.3}}</p>
@@ -22,7 +23,7 @@
                 </div>
                     {% else %}
                                     <div class="col-sm">
-                    <img style="text-align: center;" src="res/images/vehiclesImages/car1.jpeg" width="150" height="150"
+                    <img style="text-align: center;" src="{% static '147140.png' %}" width="150" height="150"
                         alt="">
                     <p class="mt-2 m-1 "><b>Name: </b>{{ empl.2 }}</p>
                     <p class="m-1"><b>Job: </b> {{ empl.3}}</p>
