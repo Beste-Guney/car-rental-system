@@ -18,7 +18,7 @@ def createCustomerTable():
     cursor.execute(
         'create table if not exists customer(user_id int not null auto_increment, '
         U'date_of_birth varchar(50), nationality varchar(50), discount_rate varchar(50), customer_status varchar(15),'
-        U'customer_name varchar(30), foreign key(user_id) references User(user_id) )engine=InnoDB;')
+        U'customer_name varchar(30), foreign key(user_id) references User(user_id) on delete cascade on update cascade)engine=InnoDB;')
 
     return 'Customer table created'
 
@@ -27,7 +27,7 @@ def createEmployeeTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists employee(user_id int not null auto_increment, '
-        U'salary numeric(8,2), employee_name varchar(50), foreign key(user_id) references User(user_id), primary key(user_id))engine=InnoDB;')
+        U'salary numeric(8,2), employee_name varchar(50), foreign key(user_id) references User(user_id) on delete cascade on update cascade, primary key(user_id))engine=InnoDB;')
 
     return 'Employee table created'
 
@@ -36,7 +36,7 @@ def createBranchEmployeeTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists branch_employee(user_id int not null, '
-        U'years_of_work int, foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
+        U'years_of_work int, foreign key(user_id) references employee(user_id) on delete cascade on update cascade, primary key(user_id))engine=InnoDB;')
 
     return 'Branch employee table created'
 
@@ -45,7 +45,7 @@ def createDamageExpertTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists damage_expertise(user_id int not null, '
-        U'interest_car_type varchar(50), foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
+        U'interest_car_type varchar(50), foreign key(user_id) references employee(user_id) on delete cascade on update cascade, primary key(user_id))engine=InnoDB;')
 
     return 'Damage Expert table created'
 
@@ -54,7 +54,7 @@ def createManagerTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists manager(user_id int not null, '
-        U'years_of_management int, foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
+        U'years_of_management int, foreign key(user_id) references employee(user_id) on delete cascade on update cascade, primary key(user_id))engine=InnoDB;')
 
     return 'Manager table created'
 
@@ -63,7 +63,7 @@ def createChauffeurTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists chauffeur(user_id int not null, '
-        U'drive_car_type varchar(50), driving_years int, foreign key(user_id) references employee(user_id), primary key(user_id))engine=InnoDB;')
+        U'drive_car_type varchar(50), driving_years int, foreign key(user_id) references employee(user_id) on delete cascade on update cascade, primary key(user_id))engine=InnoDB;')
 
     return 'Chauffeur table created'
 

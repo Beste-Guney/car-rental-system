@@ -16,7 +16,7 @@ def createModelBrandTable():
 def createVehicleTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists vehicle(license_plate varchar(8) not null,status varchar(20),daily_rent_price float,model varchar(15),price int,age int,kilometers int,transmission_type varchar(10),buying_manager_id int,branch_id int,check (status in ( \'on_rent\', \'available\', \'on_transfer\', \'unavailable\', \'reserved\')),check (transmission_type in (\'Automatic\', \'Manual\')),PRIMARY KEY (license_plate),FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id),FOREIGN KEY (branch_id) REFERENCES branch(branch_id),FOREIGN KEY (model) REFERENCES modelBrand(model))engine=InnoDB;')
+        'create table if not exists vehicle(license_plate varchar(8) not null,status varchar(20),daily_rent_price float,model varchar(15),price int,age int,kilometers int,transmission_type varchar(10),buying_manager_id int,branch_id int,check (status in ( \'on_rent\', \'available\', \'on_transfer\', \'onsale\', \'reserved\')),check (transmission_type in (\'Automatic\', \'Manual\')),PRIMARY KEY (license_plate),FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id) on update cascade ,FOREIGN KEY (branch_id) REFERENCES branch(branch_id) on update cascade ,FOREIGN KEY (model) REFERENCES modelBrand(model) on delete cascade on update cascade)engine=InnoDB;')
 
     return 'Vehicle created'
 
@@ -75,7 +75,7 @@ class BuyCarView(View):
     def get(self, request, branch_id):
         cursor = connection.cursor()
         cursor.execute(
-            'select * from vehicle where status=\'unavailable\''
+            'select * from vehicle where status=\'onsale\''
         )
         result = cursor.fetchall()
         vehicle_info = []
