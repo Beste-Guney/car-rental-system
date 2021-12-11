@@ -9,7 +9,9 @@ from account.forms import CustomerCreationForm, UserLoginForm
 def createUserTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists User(user_id int not null auto_increment, password varchar(50) not null, email varchar(50) not null, address varchar(50), phone_number varchar(15), primary key(user_id)) engine=InnoDB')
+        'create table if not exists User(user_id int not null auto_increment,'
+        'password varchar(50) not null, email varchar(50) not null, address varchar(50), '
+        'phone_number varchar(15), primary key(user_id)) engine=InnoDB')
     return 'User table created'
 
 
