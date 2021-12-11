@@ -1,7 +1,7 @@
 from django.urls import path
-from customer.views import customerRegisterPage
+from customer.views import customerDashboard
 
 app_name = 'customer'
 urlpatterns = [
-    path('register/', customerRegisterPage.as_view(), name='customer_register'),
+    path('customerDashboard/', customerDashboard.as_view(), name='customer_register'),
 ]

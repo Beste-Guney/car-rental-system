@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
-from django.views.generic.list import ListView
 from django.http import JsonResponse
 from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, DamageExpertCreationForm
 
@@ -18,7 +17,7 @@ def createModelBrandTable():
 def createVehicleTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists vehicle(license_plate varchar(8) not null,status varchar(20),daily_rent_price float,model varchar(15),price int,age int,kilometers int,transmission_type varchar(10),buying_manager_id int,branch_id int,check (status in ( \'on_rent\', \'available\', \'on_transfer\', \'unavailable\', \'reserved\')),check (transmission_type in (\'Automatic\', \'Manual\')),PRIMARY KEY (license_plate),FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id),FOREIGN KEY (branch_id) REFERENCES branch(branch_id),FOREIGN KEY (model) REFERENCES modelBrand(model))engine=InnoDB;')
+        'create table if not exists vehicle(license_plate varchar(50) not null,status varchar(20),daily_rent_price float,model varchar(15),price int,age int,kilometers int,transmission_type varchar(10),buying_manager_id int,branch_id int,check (status in ( \'on_rent\', \'available\', \'on_transfer\', \'unavailable\', \'reserved\')),check (transmission_type in (\'Automatic\', \'Manual\')),PRIMARY KEY (license_plate),FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id),FOREIGN KEY (branch_id) REFERENCES branch(branch_id),FOREIGN KEY (model) REFERENCES modelBrand(model))engine=InnoDB;')
 
     return 'Vehicle created'
 

@@ -1,7 +1,9 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.views import View
 from account.forms import CustomerCreationForm, UserLoginForm
+from customer.views import customerDashboard
 
 
 # Create your views here.
@@ -225,7 +227,7 @@ class LoginView(View):
                 print()
             else:
                 request.session['user_type'] = 'customer'
-            return render(request, 'customerDashboard.html')
+            return redirect('customer:customer_register')
         else:
             form = UserLoginForm()
             context = {'form': form}

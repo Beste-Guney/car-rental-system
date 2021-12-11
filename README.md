@@ -20,3 +20,9 @@ Paste this to YOUR_SECRET_KEY<br />
 
 ` python manage.py migrate` to create tables <br />
 ` python manage.py runserver` to run server
+
+#### After creating tables
+
+After running first time you should add forign key to employee table <br />
+`alter table employee add branch_id int;` <br />
+`alter table employee add foreign key (branch_id) references branch(branch_id);`
