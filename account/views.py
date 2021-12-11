@@ -9,7 +9,7 @@ from account.forms import CustomerCreationForm, UserLoginForm
 def createUserTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists User(user_id int not null auto_increment,'
+        'create table if not exists user(user_id int not null auto_increment,'
         'password varchar(50) not null, email varchar(50) not null, address varchar(50), '
         'phone_number varchar(15), primary key(user_id)) engine=InnoDB')
     return 'User table created'
@@ -20,7 +20,7 @@ def createCustomerTable():
     cursor.execute(
         'create table if not exists customer(user_id int not null auto_increment, '
         U'date_of_birth varchar(50), nationality varchar(50), discount_rate varchar(50), customer_status varchar(15),'
-        U'customer_name varchar(30), foreign key(user_id) references User(user_id) )engine=InnoDB;')
+        U'customer_name varchar(30), foreign key(user_id) references user(user_id) )engine=InnoDB;')
 
     return 'Customer table created'
 
@@ -29,7 +29,7 @@ def createEmployeeTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists employee(user_id int not null auto_increment, '
-        U'salary numeric(8,2), employee_name varchar(50), foreign key(user_id) references User(user_id), primary key(user_id))engine=InnoDB;')
+        U'salary numeric(8,2), employee_name varchar(50), foreign key(user_id) references user(user_id), primary key(user_id))engine=InnoDB;')
 
     return 'Employee table created'
 
@@ -87,7 +87,9 @@ def insertIntoBranch(branch, budget, city):
 
 def insertIntoEmployee(name, salary, branch_id):
     cursor = connection.cursor()
-    cursor.execute('insert into employee(employee_name, salary, branch_id) values(' + name + ',' + salary + ',' + branch_id + ');')
+    cursor.execute(
+        'insert into employee(employee_name, salary, branch_id) values(' + name + ',' + salary + ',' + branch_id + ');')
+
 
 def insertIntoManager(years, id):
     cursor = connection.cursor()
@@ -95,7 +97,7 @@ def insertIntoManager(years, id):
         'insert into manager(years_of_management, user_id) values(' + years + ',' + id + ');')
 
 
-#adding foreign key to employee
+# adding foreign key to employee
 def alterEmployee():
     cursor = connection.cursor()
     cursor.execute(
@@ -154,7 +156,7 @@ class RegisterCustomer(View):
 
 
 class LoginView(View):
-    #creating related tables at db
+    # creating related tables at db
     createUserTable()
     createCustomerTable()
     createEmployeeTable()
@@ -163,16 +165,17 @@ class LoginView(View):
     createDamageExpertTable()
     createChauffeurTable()
     createBranchTable()
-    #alterEmployee()
 
-    #post request
+    # alterEmployee()
+
+    # post request
     def post(self, request):
         form = UserLoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
-            #checking if user exists
+            # checking if user exists
             cursor = connection.cursor()
             cursor.execute(
                 'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
@@ -182,7 +185,7 @@ class LoginView(View):
             if len(desc) == 0:
                 return redirect('login_user')
 
-            #storing user_id in session
+            # storing user_id in session
             desc = desc[0]
             user_id = desc[0]
             request.session['logged_in_user'] = user_id
@@ -194,7 +197,7 @@ class LoginView(View):
             desc = cursor.fetchall()
 
             if len(desc) == 0:
-                #then user is an employee
+                # then user is an employee
                 cursor.execute(
                     'select * from branch_employee where user_id=\'' + str(user_id) + '\''
                 )
@@ -215,7 +218,7 @@ class LoginView(View):
                             request.session['user_type'] = 'damage_expert'
                     else:
                         request.session['user_type'] = 'manager'
-                        return redirect('manager:manager_dashboard', manager_id = user_id)
+                        return redirect('manager:manager_dashboard', manager_id=user_id)
                 else:
                     request.session['user_type'] = 'branch_employee'
                 desc = cursor.fetchall()

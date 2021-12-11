@@ -5,6 +5,7 @@ from django.views.generic.list import ListView
 from django.http import JsonResponse
 from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, DamageExpertCreationForm
 
+
 # Create your views here.
 def createModelBrandTable():
     cursor = connection.cursor()
@@ -12,6 +13,7 @@ def createModelBrandTable():
         'create table if not exists modelBrand(model varchar(15),brand varchar(20),primary key(model))engine=InnoDB;')
 
     return 'Model brand created'
+
 
 def createVehicleTable():
     cursor = connection.cursor()
@@ -35,7 +37,7 @@ class ManagerMainPage(View):
         branch_id = result[3]
         employee_name = result[2]
 
-        #finding the branch
+        # finding the branch
         cursor.execute(
             'select * from branch where branch_id=\'' + str(branch_id) + '\''
         )
@@ -43,7 +45,8 @@ class ManagerMainPage(View):
         result = result[0]
         branch_name = result[2]
 
-        return render(request, 'managerDashboard.html', {'branch_id' : branch_id, 'branch_name':branch_name , 'name':employee_name})
+        return render(request, 'managerDashboard.html',
+                      {'branch_id': branch_id, 'branch_name': branch_name, 'name': employee_name})
 
 
 class BranchCarView(View):
@@ -68,7 +71,8 @@ class BranchCarView(View):
         result = cursor.fetchall()
         result = result[0]
         name = result[0]
-        return render(request, 'branchCarsManaager.html', {'vehicles':vehicle_info, 'name': name, 'branch_id' : branch_id})
+        return render(request, 'branchCarsManaager.html',
+                      {'vehicles': vehicle_info, 'name': name, 'branch_id': branch_id})
 
 
 class BuyCarView(View):
@@ -82,8 +86,10 @@ class BuyCarView(View):
 
         for car in result:
             item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
+
             vehicle_info.append(item_detail)
-        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info, 'branch_id' : branch_id})
+        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info, 'branch_id': branch_id})
+
 
 def ajaxBuyCar(request):
     print('called')
@@ -96,7 +102,7 @@ def ajaxBuyCar(request):
         'select budget, branch_id from branch where manager_id=\'' + manager + '\''
     )
     result = cursor.fetchall()
-    result = result[0] #budget of the branch
+    result = result[0]  # budget of the branch
     budget = result[0]
     branch_id = result[1]
     print(budget)
@@ -118,9 +124,10 @@ def ajaxBuyCar(request):
 
     # if we can afford it means that we bought it
     cursor.execute(
-        'update vehicle set status = \'available\'  where license_plate = \'' + str(vehicle_plate) + '\';'    )
+        'update vehicle set status = \'available\'  where license_plate = \'' + str(vehicle_plate) + '\';')
     cursor.execute(
-        'update vehicle set buying_manager_id = ' + str(manager) + ' where license_plate = \'' + str(vehicle_plate) + '\';'
+        'update vehicle set buying_manager_id = ' + str(manager) + ' where license_plate = \'' + str(
+            vehicle_plate) + '\';'
     )
     cursor.execute(
         'update vehicle set branch_id = ' + str(branch_id) + ' where license_plate = \'' + str(vehicle_plate) + '\';'
@@ -154,10 +161,11 @@ def findEmployeeType(id):
 class EmployeeView(View):
 
     def get(self, request, branch_id):
-        #fetching all employees at that branch
+        # fetching all employees at that branch
         cursor = connection.cursor()
         cursor.execute(
-            'select * from employee where branch_id=' + str(branch_id) + ' and user_id <>' + str(request.session['logged_in_user']) + ';'
+            'select * from employee where branch_id=' + str(branch_id) + ' and user_id <>' + str(
+                request.session['logged_in_user']) + ';'
         )
         result = cursor.fetchall()
 
@@ -175,7 +183,8 @@ class EmployeeView(View):
         result = result[0]
         name = result[0]
 
-        return render(request, 'branchEmployee.html', {'employees': employee_list, 'name':name,'branch_id' : branch_id})
+        return render(request, 'branchEmployee.html',
+                      {'employees': employee_list, 'name': name, 'branch_id': branch_id})
 
 
 class AddBranchEmployeeView(View):
@@ -215,12 +224,13 @@ class AddBranchEmployeeView(View):
             desc = desc[0]
             user_id = desc[0]
 
-            #inserting into employee tables
-            print( 'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );'
-)
+            # inserting into employee tables
+            print('insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );'
+                  )
             cursor.execute(
                 'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
-                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );' )
+                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );')
 
             cursor.execute(
                 'insert into branch_employee(user_id, years_of_work) values(' + str(
@@ -287,7 +297,7 @@ class AddChauffeurView(View):
             desc = desc[0]
             user_id = desc[0]
 
-            #inserting into employee tables
+            # inserting into employee tables
             cursor.execute(
                 'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
                     user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );')
@@ -357,7 +367,7 @@ class AddDamageExpertView(View):
             desc = desc[0]
             user_id = desc[0]
 
-            #inserting into employee tables
+            # inserting into employee tables
             cursor.execute(
                 'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
                     user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );')
@@ -366,7 +376,7 @@ class AddDamageExpertView(View):
                 'insert into damage_expertise(user_id, interest_car_type) values(' + str(
                     user_id) + ',\'' + car_type + '\');'
             )
-            return redirect('manager:branch-employees' , branch_id)
+            return redirect('manager:branch-employees', branch_id)
 
         else:
             form = DamageExpertCreationForm()
