@@ -3,22 +3,24 @@
 {% if request.session.user_type == 'customer' %}
 <div class="container">
     <div class="row mt-5">
-
         <table>
-
-            {% for vehical in vehicals %}
+            {% for vehicle in vehicles %}
             {% if forloop.counter0|divisibleby:4 %}
             <tr>
                 {% endif %}
                 <td>
-                    <p class="mt-2 m-1"><b>Plate: </b> {{vehical.9}}</p>
-                    <p class="m-1"><b>Daily Price: </b> {{vehical.1}}</p>
-                    <p class="m-1"><b>Daily Price: </b> {{vehical.2}}</p>
-                    <p class="m-1"><b>Age: </b>{{vehical.4}}</p>
-                    <p class="m-1"><b>Kilometers: </b>{{vehical.3}} km</p>
-                    <p class="m-1"><b>Car Type: </b>{{vehical.2}}</p>
+                    <p class="mt-2 m-1"><b>Plate: </b> {{vehicle.9}}</p>
+                    <p class="m-1"><b>Daily Price: </b> {{vehicle.1}}</p>
+                    <p class="m-1"><b>Daily Price: </b> {{vehicle.2}}</p>
+                    <p class="m-1"><b>Age: </b>{{vehicle.4}}</p>
+                    <p class="m-1"><b>Kilometers: </b>{{vehicle.3}} km</p>
+                    <p class="m-1"><b>Car Type: </b>{{vehicle.2}}</p>
                     <p class="m-1"><b>Car Type: </b>{{forloop.counter0}}</p>
-                    <button type="button" class="btn btn-success">Rent</button>
+                    <form action="{% url 'customer:customer_dashboard' %}" method='post'>
+                        {% csrf_token %}
+                        <input type='hidden' name="plate" value="{{ vehicle.9 }}"/>
+                        <button type="submit" class="btn btn-success">Rent</button>
+                    </form>
                 </td>
                 {% if forloop.counter|divisibleby:4 or forloop.last %}
             </tr>
@@ -29,5 +31,4 @@
     </div>
 </div>
 {% endif %}
-
 {% endblock %}

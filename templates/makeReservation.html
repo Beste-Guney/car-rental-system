@@ -1,0 +1,30 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+{% if request.session.user_type == 'customer' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <h4>{{ vehicle.9 }}</h4>
+            <p class="m-1"><b>Daily Price: </b> {{ vehicle.1 }}$</p>
+            <p class="m-1"><b>Age: </b>{{ vehicle.4 }}</p>
+            <p class="m-1"><b>Kilometers: </b>{{ vehicle.5 }} km</p>
+            <p class="m-1"><b>Car Type: </b>{{ vehicle.2 }}</p>
+            <p class="m-1"><b>Car Rate: </b>*****</p>
+            <form action="{% url 'customer:customer_make_res' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input type='hidden' name="reserver_id" value="{{ userid }}"/>
+                <input type='hidden' name="license_plate" value="{{ vehicle.9 }}"/>
+                <input type='hidden' name="daily_cost" value="{{ vehicle.1 }}"/>
+                <button type="submit" class="btn btn-success mt-3">Reserve</button>
+            </form>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+
+

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.views import View
 from account.forms import CustomerCreationForm, UserLoginForm
-from customer.views import customerDashboard
+from customer.views import CustomerDashboard
 
 
 # Create your views here.
@@ -227,7 +227,7 @@ class LoginView(View):
                 print()
             else:
                 request.session['user_type'] = 'customer'
-            return redirect('customer:customer_register')
+            return redirect('customer:customer_dashboard')
         else:
             form = UserLoginForm()
             context = {'form': form}

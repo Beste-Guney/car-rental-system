@@ -6,9 +6,57 @@ from django.http import JsonResponse
 from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, DamageExpertCreationForm
 
 
-def createModelBrandTable():
+def CreateModelBrandTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists modelBrand(model varchar(15),brand varchar(20),primary key(model))engine=InnoDB;')
+
+    return 'Model brand created'
+
+
+def CreateReservationTable():
+    cursor = connection.cursor()
+    sql = """CREATE TABLE reservation(
+        reservation_number int not null auto_increment,
+	    start_date date,
+	    end_date date,
+	    status varchar(10) DEFAULT 'not_paid' CHECK (status IN ('on_rent', 'accepted', 'not_accepted', 'canceled', 'paid', 'not_paid')),
+	    cost float,
+	    reserver int not null REFERENCES customer(user_id),
+	    checked_by int REFERENCES branch_employee(user_id),
+	    isApproved boolean DEFAULT false,
+	    reason text,
+	    insurance_type varchar(10) REFERENCES insurance(insurance_type),
+	    license_plate varchar(8) REFERENCES vehicle(license_plate),
+	    reserved_chauf_id int REFERENCES chauffeur(user_id),
+	    isChaufAccepted boolean,
+        PRIMARY KEY(reservation_number)
+ )engine=InnoDB;"""
+
+    cursor.execute(sql)
+
+    return 'Reservation table created'
+
+
+def CreateBranchEmployeeTable():
+    cursor = connection.cursor()
+    sql = """CREATE TABLE if not exists branch_employee(
+            user_id int not null REFERENCES employee(user_id),
+            years_of_work int,
+            PRIMARY KEY (user_id)
+            )engine=InnoDB;"""
+    cursor.execute(sql)
+
+    return 'Branch Employee created'
+
+
+def CreateInsuranceTable():
+    cursor = connection.cursor()
+    sql = """CREATE TABLE if not exists insurance(
+                insurance_price float,
+                insurance_type varchar(10),
+                primary key(insurance_type)
+                )engine=InnoDB;"""
+    cursor.execute(sql)
 
     return 'Model brand created'
