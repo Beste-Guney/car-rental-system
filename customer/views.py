@@ -1,8 +1,64 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
-from .forms import CarPlate, MakeReservertion, VehicleRate
+from .forms import CarPlate, MakeReservertion, VehicleRate, CreateRequestForm
 from datetime import datetime
+
+
+class CreateRequest(View):
+
+    def post(self, request):
+        form = CreateRequestForm(request.POST)
+
+        if form.is_valid():
+            user_id = request.session['logged_in_user']
+            license_plate = form.cleaned_data['license_plate']
+            from_branch = form.cleaned_data['from_branch']
+            to_branch = form.cleaned_data['to_branch']
+            reason = form.cleaned_data['reason']
+            cursor = connection.cursor()
+            sql = "INSERT INTO request " \
+                  "(req_id, made_by_customer, from_branch, to_branch, requested_vehicle, checked_by_employee, isApproved, reason) " \
+                  "VALUES (NULL, {}, {}, {}, '{}', NULL, NULL, '{}');".format(user_id, from_branch, to_branch,
+                                                                              license_plate, reason)
+            cursor.execute(sql)
+            cursor = connection.cursor()
+            sql = "SELECT * FROM `reservation` WHERE reserver = {} and status = 'paid';".format(user_id)
+            cursor.execute(sql)
+            old_res = cursor.fetchall()
+            form = CreateRequestForm()
+            context = {
+                'old_res': old_res,
+                'form': form,
+                'message': 'Request is taken.'
+            }
+            return render(request, 'customerRequest.html', context)
+
+        cursor = connection.cursor()
+        sql = "SELECT * FROM `reservation` WHERE reserver = {} and status = 'paid';".format(user_id)
+        cursor.execute(sql)
+        old_res = cursor.fetchall()
+        form = CreateRequestForm()
+        context = {
+            'old_res': old_res,
+            'form': form,
+            'message': 'Error occured.'
+        }
+        return render(request, 'customerRequest.html', context)
+
+    def get(self, request) -> 'html':
+        user_id = request.session['logged_in_user']
+        cursor = connection.cursor()
+        sql = "SELECT * FROM `reservation` WHERE reserver = {} and status = 'paid';".format(user_id)
+        cursor.execute(sql)
+        old_res = cursor.fetchall()
+        form = CreateRequestForm()
+        context = {
+            'old_res': old_res,
+            'form': form,
+            'message': ''
+        }
+        return render(request, 'customerRequest.html', context)
 
 
 class RateCar(View):
@@ -16,10 +72,6 @@ class RateCar(View):
             rate = form.cleaned_data['rate']
             user_id = request.session['logged_in_user']
             cursor = connection.cursor()
-            print(license_plate)
-            print(rate)
-            print(comment)
-            print(user_id)
             sql = "INSERT INTO vehicle_rate (customer_id, license_plate, comment, score) " \
                   "VALUES ({}, '{}', '{}', {});".format(user_id, license_plate, comment, rate)
             cursor.execute(sql)

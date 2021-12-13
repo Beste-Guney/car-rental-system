@@ -7,6 +7,23 @@ from django.views import View
 from django.db import connection
 
 
+class CreateRequestForm(forms.Form):
+    sql = "SELECT branch_id,branch_name FROM branch;"
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    branchs = cursor.fetchall()
+
+    license_plate = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '12EE345'}))
+    from_branch = forms.CharField(label="From", widget=forms.Select(choices=branchs))
+    to_branch = forms.CharField(label="To", widget=forms.Select(choices=branchs))
+    reason = forms.CharField(widget=forms.Textarea(attrs={'name': 'body', 'rows': 2, 'cols': 2}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': "form-group form-control mt-3"})
+
+
 class VehicleRate(forms.Form):
     rates = [tuple([x, x]) for x in range(1, 6)]
 

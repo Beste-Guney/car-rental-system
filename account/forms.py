@@ -5,6 +5,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db import connection
 
+
 class UserLoginForm(forms.Form):
     email = forms.EmailField(label='Enter email')
     password = forms.CharField(label='Enter your password')
@@ -23,13 +24,11 @@ class CustomerCreationForm(forms.Form):
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)
     state = forms.CharField(label='nationality', max_length=20)
-    #birth_date = forms.DateField(label='birthday', widget=forms.DateInput(attrs={'placeholder': '__/__/____', 'class': 'date',}))
+
+    # birth_date = forms.DateField(label='birthday', widget=forms.DateInput(attrs={'placeholder': '__/__/____', 'class': 'date',}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             if field is not 'birth_date':
                 self.fields[field].widget.attrs.update({'class': "form-group form-control mt-3"})
-
-
-

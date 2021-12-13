@@ -74,3 +74,21 @@ def CreateInsuranceTable():
     cursor.execute(sql)
 
     return 'Model brand created'
+
+
+def CreateRequestTable():
+    cursor = connection.cursor()
+    sql = """CREATE TABLE request(
+            req_id int not null AUTO_INCREMENT,
+            made_by_customer int not null REFERENCES customer(user_id),
+            from_branch int not null REFERENCES branch(branch_id),
+            to_branch int not null REFERENCES branch(branch_id),
+            requested_vehicle varchar(8) not null REFERENCES vehicle(license_plate),
+            checked_by_employee int REFERENCES branch_employee(user_id),
+            isApproved boolean,
+            reason text,
+            PRIMARY KEY (req_id)
+            )engine=InnoDB;"""
+    cursor.execute(sql)
+
+    return 'Request table created'
