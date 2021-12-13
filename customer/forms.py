@@ -7,6 +7,19 @@ from django.views import View
 from django.db import connection
 
 
+class VehicleRate(forms.Form):
+    rates = [tuple([x, x]) for x in range(1, 6)]
+
+    license_plate = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '12EE345'}))
+    comment = forms.CharField(widget=forms.Textarea(attrs={'name': 'body', 'rows': 2, 'cols': 2}))
+    rate = forms.CharField(label="Rate", widget=forms.Select(choices=rates))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': "form-group form-control mt-3"})
+
+
 class MakeReservertion(forms.Form):
     sql = "SELECT insurance_price, insurance_type FROM insurance;"
     cursor = connection.cursor()

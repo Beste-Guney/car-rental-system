@@ -1,10 +1,44 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
-from .forms import CarPlate, MakeReservertion
+from .forms import CarPlate, MakeReservertion, VehicleRate
 from datetime import datetime
-from django.views.generic.list import ListView
-from django.http import JsonResponse
+
+
+class RateCar(View):
+
+    def post(self, request):
+        form = VehicleRate(request.POST)
+
+        if form.is_valid():
+            license_plate = form.cleaned_data['license_plate']
+            comment = form.cleaned_data['comment']
+            rate = form.cleaned_data['rate']
+            user_id = request.session['logged_in_user']
+            cursor = connection.cursor()
+            print(license_plate)
+            print(rate)
+            print(comment)
+            print(user_id)
+            sql = "INSERT INTO vehicle_rate (customer_id, license_plate, comment, score) " \
+                  "VALUES ({}, '{}', '{}', {});".format(user_id, license_plate, comment, rate)
+            cursor.execute(sql)
+
+        return self.get(request)
+
+    def get(self, request) -> 'html':
+        user_id = request.session['logged_in_user']
+        cursor = connection.cursor()
+        sql = "SELECT * FROM `reservation` WHERE reserver = {} and status = 'paid';".format(user_id)
+        cursor.execute(sql)
+        old_res = cursor.fetchall()
+        form = VehicleRate()
+        context = {
+            'old_res': old_res,
+            'userid': user_id,
+            'form': form
+        }
+        return render(request, 'ratevehicles.html', context)
 
 
 class MakeReservation(View):

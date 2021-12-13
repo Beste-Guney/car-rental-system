@@ -50,6 +50,20 @@ def CreateBranchEmployeeTable():
     return 'Branch Employee created'
 
 
+def CreateVehicleRateTable():
+    cursor = connection.cursor()
+    sql = """CREATE TABLE vehicle_rate(
+            customer_id int not null REFERENCES customer(user_id),
+            license_plate varchar(8) not null REFERENCES vehicle(license_plate),
+            comment text,
+            score int check (score in (1, 2, 3, 4, 5)),
+            PRIMARY KEY (customer_id, license_plate)
+            )engine=InnoDB;"""
+    cursor.execute(sql)
+
+    return 'Vehicle Rate Table created'
+
+
 def CreateInsuranceTable():
     cursor = connection.cursor()
     sql = """CREATE TABLE if not exists insurance(
