@@ -1,8 +1,46 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
-from .forms import CarPlate, MakeReservertion, VehicleRate, CreateRequestForm
+from .forms import CarPlate, MakeReservertion, VehicleRate, CreateRequestForm, BranchRate
 from datetime import datetime
+
+
+class RateBranch(View):
+
+    def post(self, request):
+        form = BranchRate(request.POST)
+
+        if form.is_valid():
+            customer_id = request.session['logged_in_user']
+            branch_id = form.cleaned_data['branch']
+            comment = form.cleaned_data['comment']
+            score = form.cleaned_data['score']
+
+            cursor = connection.cursor()
+            sql = "INSERT INTO branch_rate (customer_id, branch_id, comment, score) VALUES ({}, {}, '{}', {});".format(
+                customer_id, branch_id, comment, score)
+            cursor.execute(sql)
+
+            form = BranchRate()
+            context = {
+                'form': form,
+                'message': 'Your evaluation is saved.'
+            }
+            return render(request, 'ratebranch.html', context)
+        form = BranchRate()
+        context = {
+            'form': form,
+            'message': 'Error occured. Try again later.'
+        }
+        return render(request, 'ratebranch.html', context)
+
+    def get(self, request):
+        form = BranchRate()
+        context = {
+            'form': form,
+            'message': ''
+        }
+        return render(request, 'ratebranch.html', context)
 
 
 class CreateRequest(View):

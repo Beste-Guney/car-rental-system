@@ -11,7 +11,6 @@
                     <th scope="col">Vehicle Plate</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">End Date</th>
-                    ,
                     <th scope="col">Cost</th>
                 </tr>
                 </thead>
@@ -29,7 +28,7 @@
             </table>
         </div>
         <div class="col-sm-4">
-            <h4>Create Transfer Request</h4>
+            <h4>Rate Vehicle</h4>
             <form action="{% url 'customer:customer_rate_vehicle' %}" method="post">
                 {% csrf_token %}
                 {{ form }}

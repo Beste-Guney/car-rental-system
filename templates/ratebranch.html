@@ -1,0 +1,20 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+{% if request.session.user_type == 'customer' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <h4>Evaluate Branch</h4>
+            <form action="{% url 'customer:customer_rate_branch' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn btn-success mt-3">Evaluate</button>
+            </form>
+            <p>{{ message }}</p>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

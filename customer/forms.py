@@ -7,6 +7,24 @@ from django.views import View
 from django.db import connection
 
 
+class BranchRate(forms.Form):
+    rates = [tuple([x, x]) for x in range(1, 6)]
+
+    sql = "SELECT branch_id,branch_name FROM branch;"
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    branchs = cursor.fetchall()
+
+    branch = forms.CharField(label="Pick a Branch", widget=forms.Select(choices=branchs))
+    comment = forms.CharField(widget=forms.Textarea(attrs={'name': 'body', 'rows': 2, 'cols': 2}))
+    score = forms.CharField(label="Score", widget=forms.Select(choices=rates))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': "form-group form-control mt-3"})
+
+
 class CreateRequestForm(forms.Form):
     sql = "SELECT branch_id,branch_name FROM branch;"
     cursor = connection.cursor()

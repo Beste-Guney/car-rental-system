@@ -92,3 +92,17 @@ def CreateRequestTable():
     cursor.execute(sql)
 
     return 'Request table created'
+
+
+def CreateBranchRateTable():
+    cursor = connection.cursor()
+    sql = """CREATE TABLE branch_rate(
+            customer_id int not null REFERENCES customer(user_id),
+            branch_id int not null REFERENCES branch(branch_id),
+            comment text,
+            score int not null,
+            PRIMARY KEY (customer_id, branch_id)
+            )engine=InnoDB;"""
+    cursor.execute(sql)
+
+    return 'Branch Rate table created'
