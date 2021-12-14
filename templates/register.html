@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <h1 style="text-align: center;" class="display-1">Register</h1>
+            <form>
+                <div class="form-group mt-3">
+                    <label for="validationDefault01">First name</label>
+                    <input type="text" class="form-control" id="validationDefault01" placeholder="First name"
+                           value="Mark" required>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                           placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                        else.</small>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="validationDefault01">Phone Number</label>
+                    <input type="text" class="form-control" id="validationDefault01" placeholder="05000000000"
+                           required>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="exampleInputPassword1">Check Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+                <div class="form-row">
+                    <label for="validationCustom03">Enter Addres</label>
+                    <div class="form-group mt-3">
+                        <label for="validationCustom03">City</label>
+                        <input type="text" class="form-control" id="validationCustom03" placeholder="City" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid city.
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="validationCustom04">State</label>
+                        <input type="text" class="form-control" id="validationCustom04" placeholder="State"
+                               required>
+                        <div class="invalid-feedback">
+                            Please provide a valid state.
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="validationCustom05">Zip</label>
+                        <input type="text" class="form-control" id="validationCustom05" placeholder="Zip" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid zip.
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="exampleInputEmail1">Birth Date</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                           placeholder="YYYY/MM/DD">
+                </div>
+                <label class="my-1 mr-2 mt-3" for="inlineFormCustomSelectPref">Preference</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                    <option selected>Licence Type</option>
+                    <option value="1">M</option>
+                    <option value="2">A1</option>
+                    <option value="3">B1</option>
+                </select>
+                <div class="form-group mt-3">
+                    <label for="exampleInputEmail1">the date of obtained</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                           placeholder="YYYY/MM/DD">
+                </div>
+                <div class="form-group mt-3">
+                    <label for="validationDefault01">Licence ID</label>
+                    <input type="text" class="form-control" id="validationDefault01" placeholder="Licence ID"
+                           value="Mark" required>
+                </div>
+                <button type="button" class="btn btn-primary mt-3 btn-lg btn-block">Submit</button>
+                <p class="mt-3">Already have account? <a href="login.html">Login</a></p>
+            </form>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+{% endblock %}

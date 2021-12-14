@@ -1,0 +1,54 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row mt-5">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>Your Reservations</h1>
+                    <form class="form-inline" role="form">
+                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                        <option selected>Order By</option>
+                        <option value="1">Start Date</option>
+                        <option value="2">Price</option>
+                        <option value="3">End Date</option>
+                    </select>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                </div>
+            </div>
+            {% for reserve in reservations %}
+                {% if forloop.counter|divisibleby:"5" %}
+                    <div class="row mt-4">
+                                    <p class="col-sm">
+                    <p class="mt-2 m-1 "><b>Id: </b>{{ reserve.0 }}</p>
+                    <p class="mt-2 m-1 "><b>Start Date: </b>{{ reserve.1 }}</p>
+                    <p class="m-1"><b>End Date: </b> {{ reserve.2}}</p>
+                    <p class="m-1"><b>Status: </b>{{ reserve.3 }}</p>
+                    <p class="m-1"><b>Cost: </b>{{ car.5 }}</p>
+                    <p class="m-1"><b>Chauffer: </b>
+                        {% if car.6  %}
+                            {{ car.6 }}</p>
+                            {% else %}
+                            There is no chauffeur for this reservation</p>
+                            {% endif %}
+                </div>
+                    {% else %}
+                                    <div class="col-sm">
+                    <p class="mt-2 m-1 "><b>Id: </b>{{ reserve.0 }}</p>
+                    <p class="mt-2 m-1 "><b>Start Date: </b>{{ reserve.1 }}</p>
+                    <p class="m-1"><b>End Date: </b> {{ reserve.2}}</p>
+                    <p class="m-1"><b>Status: </b>{{ reserve.3 }}</p>
+                    <p class="m-1"><b>Cost: </b>{{ car.5 }}</p>
+                    <p class="m-1"><b>Chauffer: </b>
+                        {% if car.6  %}
+                            {{ car.6 }}</p>
+                            {% else %}
+                            There is no chauffeur for this reservation</p>
+                            {% endif %}
+                </div>
+                {% endif %}
+
+            {% endfor %}
+        </div></div>
+
+{% endblock %}

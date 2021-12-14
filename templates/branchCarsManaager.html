@@ -10,18 +10,15 @@
                         <div class="form-group">
                             <label class="sr-only" for="name">Enter License Plate</label>
                             <input type="text" class="form-control" id="name" placeholder="License Plate">
+                            <input type="hidden" value="{{ vehicles }}" id="vehicles">
                         </div>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Vehicle Type</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
-                    </select>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Age</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
+                    <select class="custom-select my-1 mr-sm-2" id="car-age" onchange="location = this.value">
+                        <option value="#" selected>Age</option>
+                        <option value="{% url 'manager:filter-by-age' 0 %}">0-5</option>
+                        <option value="{% url 'manager:filter-by-age' 6 %}">5-10</option>
+                        <option value="{% url 'manager:filter-by-age' 11 %}">10-15</option>
+                        <option value="{% url 'manager:filter-by-age' 16 %}">15-20</option>
+                        <option value="{% url 'manager:filter-by-age' 21 %}">More than 20</option>
                     </select>
                     <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
                         <option selected>Model</option>
@@ -57,7 +54,7 @@
                     </form>
                 </div>
             </div>
-            {% for car in vehicles %}
+           {% for car in vehicles %}
                 {% if forloop.counter|divisibleby:"5" %}
                     <div class="row mt-4">
                                     <div class="col-sm">

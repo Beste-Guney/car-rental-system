@@ -1,5 +1,5 @@
 from django.urls import path
-from manager.views import ManagerMainPage, BranchCarView, ajaxBuyCar, BuyCarView, EmployeeView, AddBranchEmployeeView,AddChauffeurView, AddDamageExpertView
+from manager.views import ManagerMainPage, BranchCarView, ajaxBuyCar, BuyCarView, EmployeeView, filter_car_by_age, AddBranchEmployeeView,AddChauffeurView, AddDamageExpertView
 
 app_name = 'manager'
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('addBranchEmployee/', AddBranchEmployeeView.as_view(), name='add-branch-employee'),
     path('addChauffeur/', AddChauffeurView.as_view(), name='add-chauffeur'),
     path('addDamageExpert/', AddDamageExpertView.as_view(), name='add-damage-expert'),
+    path('filterByAge/<int:value>', filter_car_by_age, name='filter-by-age')
 ]
