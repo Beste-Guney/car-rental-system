@@ -9,7 +9,7 @@ from account.forms import CustomerCreationForm, UserLoginForm
 def createUserTable():
     cursor = connection.cursor()
     cursor.execute(
-        'create table if not exists User(user_id int not null auto_increment, password varchar(50) not null, email varchar(50) not null, address varchar(50), phone_number varchar(15), primary key(user_id)) engine=InnoDB')
+        'create table if not exists user(user_id int not null auto_increment, password varchar(50) not null, email varchar(50) not null, address varchar(50), phone_number varchar(15), primary key(user_id)) engine=InnoDB')
     return 'User table created'
 
 
@@ -18,7 +18,7 @@ def createCustomerTable():
     cursor.execute(
         'create table if not exists customer(user_id int not null auto_increment, '
         U'date_of_birth varchar(50), nationality varchar(50), discount_rate varchar(50), customer_status varchar(15),'
-        U'customer_name varchar(30), foreign key(user_id) references User(user_id) on delete cascade on update cascade)engine=InnoDB;')
+        U'customer_name varchar(30), foreign key(user_id) references user(user_id) on delete cascade on update cascade)engine=InnoDB;')
 
     return 'Customer table created'
 
@@ -27,7 +27,7 @@ def createEmployeeTable():
     cursor = connection.cursor()
     cursor.execute(
         'create table if not exists employee(user_id int not null auto_increment, '
-        U'salary numeric(8,2), employee_name varchar(50), foreign key(user_id) references User(user_id) on delete cascade on update cascade, primary key(user_id))engine=InnoDB;')
+        U'salary numeric(8,2), employee_name varchar(50), foreign key(user_id) references user(user_id) on delete cascade on update cascade, primary key(user_id))engine=InnoDB;')
 
     return 'Employee table created'
 

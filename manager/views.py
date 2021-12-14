@@ -83,7 +83,33 @@ class BuyCarView(View):
         for car in result:
             item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
             vehicle_info.append(item_detail)
-        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info, 'branch_id' : branch_id})
+
+        models, brands = models_and_brands()
+
+        #sending models
+        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info, 'branch_id' : branch_id, 'models': models, 'brands': brands})
+
+
+def models_and_brands():
+    # sending existing models from db to view
+    cursor = connection.cursor()
+    cursor.execute(
+        'select * from modelBrand;'
+    )
+    result = cursor.fetchall()
+    models = []
+
+    for res in result:
+        models.append(res[0])
+
+    #sending existng brands
+    brands = set()
+
+    for res in result:
+        brands.add(res[1])
+
+    return models, brands
+
 
 def ajaxBuyCar(request):
     print('called')

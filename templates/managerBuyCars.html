@@ -11,28 +11,25 @@
                             <input type="text" class="form-control" id="name" placeholder="License Plate">
                         </div>
                     <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Vehicle Type</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
-                    </select>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
                         <option selected>Age</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
+                        <option value="0">0-5</option>
+                        <option value="5">5-10</option>
+                        <option value="10">10-15</option>
+                        <option value="15">15-More</option>
                     </select>
                     <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
                         <option selected>Model</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
+                        {% for mod in models %}
+                            <option value="{{ mod }}">{{ mod }}</option>
+                        {% endfor %}
                     </select>
                     <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
                         <option selected>Kilometers</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
+                        <option value="0">0-10000</option>
+                        <option value="1">10000-20000</option>
+                        <option value="2">20000-50000</option>
+                        <option value="3">50000-100000</option>
+                        <option value="4">100000-More</option>
                     </select>
                     <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
                         <option selected>Brand</option>
@@ -63,7 +60,6 @@
                     <img style="text-align: center;" src="res/images/vehiclesImages/car1.jpeg" width="150" height="150"
                         alt="">
                     <p class="mt-2 m-1 "><b>Plate: </b>{{ car.0 }}</p>
-                    <p class="m-1"><b>Daily Price: </b> {{ car.2}}</p>
                     <p class="m-1"><b>Model: </b>{{ car.3 }}</p>
                     <p class="m-1"><b>Age: </b>{{ car.5 }}</p>
                     <p class="m-1"><b>Kilometers: </b>{{ car.6 }}</p>
@@ -77,7 +73,6 @@
                     <img style="text-align: center;" src="res/images/vehiclesImages/car1.jpeg" width="150" height="150"
                         alt="">
                     <p class="mt-2 m-1 "><b>Plate: </b>{{ car.0 }}</p>
-                    <p class="m-1"><b>Daily Price: </b> {{ car.2}}</p>
                     <p class="m-1"><b>Model: </b>{{ car.3 }}</p>
                     <p class="m-1"><b>Age: </b>{{ car.5 }}</p>
                     <p class="m-1"><b>Kilometers: </b>{{ car.6 }}</p>
