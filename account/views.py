@@ -224,6 +224,7 @@ class LoginView(View):
                         return redirect('manager:manager_dashboard', manager_id=user_id)
                 else:
                     request.session['user_type'] = 'branch_employee'
+                    return redirect('employee:employee-dashboard', employee_id=user_id)
                 desc = cursor.fetchall()
                 print()
             else:
