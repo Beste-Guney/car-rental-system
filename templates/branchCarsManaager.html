@@ -6,51 +6,47 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1>Vehicles at {{ name }}</h1>
-                    <form class="form-inline" role="form">
+                    <form class="form-inline" role="form" action="{% url 'manager:filter-vehicle' %}" method="post">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label class="sr-only" for="name">Enter License Plate</label>
-                            <input type="text" class="form-control" id="name" placeholder="License Plate">
+                            <input name="license" type="text" class="form-control" id="name" placeholder="License Plate">
                             <input type="hidden" value="{{ vehicles }}" id="vehicles">
                         </div>
-                    <select class="custom-select my-1 mr-sm-2" id="car-age" onchange="location = this.value">
-                        <option value="#" selected>Age</option>
-                        <option value="{% url 'manager:filter-by-age' 0 %}">0-5</option>
-                        <option value="{% url 'manager:filter-by-age' 6 %}">5-10</option>
-                        <option value="{% url 'manager:filter-by-age' 11 %}">10-15</option>
-                        <option value="{% url 'manager:filter-by-age' 16 %}">15-20</option>
-                        <option value="{% url 'manager:filter-by-age' 21 %}">More than 20</option>
+                    <select name='age-vehicle' class="custom-select my-1 mr-sm-2" id="car-age">
+                        <option value="-1">Age</option>
+                        <option value="0">0-5</option>
+                        <option value="6">6-10</option>
+                        <option value="11">11-15</option>
+                        <option value="16">15-20</option>
+                        <option value="21">More than 20</option>
                     </select>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Model</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
+                    <select name='model-vehicle' class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                        <option value="empty" selected>Model</option>
+                        {% for model in models %}
+                            <option value={{ model }}>{{ model }}</option>
+                        {% endfor %}
                     </select>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Kilometers</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
+                    <select name="kilometers" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                        <option selected value="-1">Kilometers</option>
+                        <option value="0">0-5000</option>
+                        <option value="5000">5000-10000</option>
+                        <option value="10000">10000-20000</option>
+                         <option value="20000">20000-40000</option>
+                         <option value="40000">40000-more</option>
                     </select>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Brand</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
+                    <select name='brand' class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                        <option value="-1" selected>Brand</option>
+                         {% for brand in brands %}
+                            <option value={{ brand }}>{{ brand }}</option>
+                        {% endfor %}
                     </select>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Lowest Boundary Price</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
-                    </select>
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option selected>Highest Boundary Price</option>
-                        <option value="1">M</option>
-                        <option value="2">A1</option>
-                        <option value="3">B1</option>
-                    </select>
-                        <button type="submit" class="btn btn-default">Submit</button>
+                    <br>
+                      <label class="sr-only" for="name">Enter Lowest Price</label>
+                    <input name="lowest" type="number" class="form-control" value="0" min="0">
+                     <label class="sr-only" for="name">Enter Highest Price</label>
+                     <input name="highest" type="number" class="form-control" value="0" min="0">
+                        <button style="margin:15px" type="submit" class="btn btn-success">Submit</button>
                     </form>
                 </div>
             </div>
@@ -81,5 +77,11 @@
                 {% endif %}
 
             {% endfor %}
-
+<script>
+    function selectAge(e){
+        val = document.getElementById('car-age').value;
+        location.href = val;
+        document.getElementById('car-age').value = val ;
+    }
+</script>
 {% endblock %}
