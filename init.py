@@ -23,7 +23,6 @@ try:
     result = cursor.execute("DROP TABLE IF EXISTS driving_license")
     result = cursor.execute("DROP TABLE IF EXISTS branch_rate")
     result = cursor.execute("DROP TABLE IF EXISTS vehicle_rate")
-    
     result = cursor.execute("DROP TABLE IF EXISTS car")
     result = cursor.execute("DROP TABLE IF EXISTS truck")
     result = cursor.execute("DROP TABLE IF EXISTS motorcycle")
