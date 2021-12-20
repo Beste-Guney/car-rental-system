@@ -30,7 +30,7 @@ class ManagerMainPage(View):
     def get(self, request, manager_id):
         cursor = connection.cursor()
         cursor.execute(
-            'select * from employee,manager where employee.user_id = manager.user_id;'
+            'select * from employee,manager where employee.user_id = manager.user_id and manager.user_id = ' + str(manager_id) + '; '
         )
         result = cursor.fetchall()
         for res in result:
