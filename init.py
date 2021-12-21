@@ -211,7 +211,7 @@ try:
                 status varchar(15),
                 cost float,
                 reserver int not null,
-                checked_by int not null,
+                checked_by int,
                 isApproved varchar(5),
                 reason text,
                 insurance_type varchar(20),

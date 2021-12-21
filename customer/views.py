@@ -260,14 +260,18 @@ class MakeReservation(View):
 
             sql = """
                 INSERT INTO `reservation` 
-                (`reservation_number`, `start_date`, `end_date`, `status`, `cost`, `reserver`, 
+                (`start_date`, `end_date`, `status`, `cost`, `reserver`, 
                 `checked_by`, `isApproved`, `reason`, `insurance_type`, `license_plate`, `reserved_chauf_id`, `isChaufAccepted`) 
-                VALUES (NULL, '{}', '{}', 'not_accepted', '{}', '{}', NULL, '0', '{}', '{}', '{}', {}, NULL);
+                VALUES ('{}', '{}', 'not_accepted', '{}', '{}', NULL, 'false', '{}', '{}', '{}', {}, NULL);
             """.format(start_date, end_date, cost, reserver_id, reason, insurance_type, license_plate,
                        chauffeur_id)
+
+            print(sql)
             cursor.execute(sql)
 
-        return render(request, 'customerDashboard.html')
+            return redirect('/customer/reservationsuccess')
+
+        return redirect('/customer/error')
 
     def get(self, request, plate) -> 'html':
         cursor = connection.cursor()
@@ -307,6 +311,16 @@ class CustomerDashboard(View):
             'vehicles': desc,
         }
         return render(request, 'customerDashboard.html', context)
+
+
+class Error(View):
+    def get(self, request):
+        return render(request, 'error.html')
+
+
+class ReservationComplate(View):
+    def get(self, request):
+        return render(request, 'reservationcomplate.html')
 
 
 class ListReservations(View):
