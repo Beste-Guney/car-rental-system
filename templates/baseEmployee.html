@@ -32,7 +32,7 @@
                         <a class="nav-link active" aria-current="page" href="/management/branchCars/{{ branch_id }}">{{ branch_name }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="">Reservations</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'employee:view-reservations' %}">Reservations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/management/buyCar/{{ branch_id }}">Requests</a>

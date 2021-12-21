@@ -6,33 +6,35 @@ from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, Dam
 
 
 # Create your views here.
-def createModelBrandTable():
-    cursor = connection.cursor()
-    cursor.execute(
-        'create table if not exists modelBrand(model varchar(15),brand varchar(20),primary key(model))engine=InnoDB;')
-
-    return 'Model brand created'
-
-
-def createVehicleTable():
-    cursor = connection.cursor()
-    cursor.execute(
-        'create table if not exists vehicle(license_plate varchar(8) not null,status varchar(20),daily_rent_price float,model varchar(15),price int,age int,kilometers int,transmission_type varchar(10),buying_manager_id int,branch_id int,check (status in ( \'on_rent\', \'available\', \'on_transfer\', \'onsale\', \'reserved\')),check (transmission_type in (\'Automatic\', \'Manual\')),PRIMARY KEY (license_plate),FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id) on update cascade ,FOREIGN KEY (branch_id) REFERENCES branch(branch_id) on update cascade ,FOREIGN KEY (model) REFERENCES modelBrand(model) on delete cascade on update cascade)engine=InnoDB;')
-
-
-    return 'Vehicle created'
+# def createModelBrandTable():
+#     cursor = connection.cursor()
+#     cursor.execute(
+#         'create table if not exists modelBrand(model varchar(15),brand varchar(20),primary key(model))engine=InnoDB;')
+#
+#     return 'Model brand created'
+#
+#
+# def createVehicleTable():
+#     cursor = connection.cursor()
+#     cursor.execute(
+#         'create table if not exists vehicle(license_plate varchar(8) not null,status varchar(20),daily_rent_price float,model varchar(15),price int,age int,kilometers int,transmission_type varchar(10),buying_manager_id int,branch_id int,check (status in ( \'on_rent\', \'available\', \'on_transfer\', \'onsale\', \'reserved\')),check (transmission_type in (\'Automatic\', \'Manual\')),PRIMARY KEY (license_plate),FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id) on update cascade ,FOREIGN KEY (branch_id) REFERENCES branch(branch_id) on update cascade ,FOREIGN KEY (model) REFERENCES modelBrand(model) on delete cascade on update cascade)engine=InnoDB;')
+#
+#
+#     return 'Vehicle created'
 
 
 class ManagerMainPage(View):
-    createModelBrandTable()
-    createVehicleTable()
+    # createModelBrandTable()
+    # createVehicleTable()
 
     def get(self, request, manager_id):
         cursor = connection.cursor()
         cursor.execute(
-            'select * from employee where user_id=\'' + str(manager_id) + '\''
+            'select * from employee,manager where employee.user_id = manager.user_id and manager.user_id = ' + str(manager_id) + '; '
         )
         result = cursor.fetchall()
+        for res in result:
+            print(res)
         result = result[0]
         branch_id = result[3]
         employee_name = result[2]
@@ -62,7 +64,7 @@ class BranchCarView(View):
         vehicle_info = []
 
         for car in result:
-            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
+            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6], car[7]]
             vehicle_info.append(item_detail)
 
         cursor.execute(
@@ -89,7 +91,7 @@ class BuyCarView(View):
         vehicle_info = []
 
         for car in result:
-            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
+            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6], car[7]]
 
             vehicle_info.append(item_detail)
 
@@ -103,7 +105,7 @@ def models_and_brands():
     # sending existing models from db to view
     cursor = connection.cursor()
     cursor.execute(
-        'select * from modelBrand;'
+        'select * from model_brand;'
     )
     result = cursor.fetchall()
     models = []
@@ -128,7 +130,7 @@ def ajaxBuyCar(request):
     # checking if we can afford it
     cursor = connection.cursor()
     cursor.execute(
-        'select budget, branch_id from branch where manager_id=\'' + manager + '\''
+        'select branch.budget, employee.branch_id from employee, branch where employee.branch_id = branch.branch_id and user_id=\'' + manager + '\''
     )
     result = cursor.fetchall()
     result = result[0]  # budget of the branch
@@ -529,9 +531,18 @@ class FilterView(View):
                         'create view filter4 as select * from filter3 where daily_rent_price between ' + str(low) + ' and ' + str(high) +';'
                 )
 
+            if brand != 'empty':
+                cursor.execute(
+                        'create view filter5 as select * from filter4 where brand=\'' + brand + '\';'
+                )
+            else:
+                cursor.execute(
+                        'create view filter5 as select * from filter4;'
+                )
+
             #gathering filtered vehicles
             cursor.execute(
-                    'select * from vehicle, filter4 where vehicle.license_plate = filter4.license_plate;'
+                    'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate;'
             )
             result = cursor.fetchall()
             vehicle_info = []
@@ -544,6 +555,7 @@ class FilterView(View):
             cursor.execute('drop view filter2')
             cursor.execute('drop view filter3')
             cursor.execute('drop view filter4')
+            cursor.execute('drop view filter5')
             models, brands = models_and_brands()
 
             return render(request, 'branchCarsManaager.html',
@@ -652,9 +664,17 @@ class FilterForBuyingView(View):
                         'create view filter4 as select * from filter3 where price between ' + str(low) + ' and ' + str(high) +';'
                 )
 
+            if brand != 'empty':
+                cursor.execute(
+                    'create view filter5 as select * from filter4 where brand=\'' + brand + '\';'
+                )
+            else:
+                cursor.execute(
+                    'create view filter5 as select * from filter4;'
+                )
             #gathering filtered vehicles
             cursor.execute(
-                    'select * from vehicle, filter4 where vehicle.license_plate = filter4.license_plate;'
+                    'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate;'
             )
             result = cursor.fetchall()
             vehicle_info = []
@@ -667,6 +687,7 @@ class FilterForBuyingView(View):
             cursor.execute('drop view filter2')
             cursor.execute('drop view filter3')
             cursor.execute('drop view filter4')
+            cursor.execute('drop view filter5')
 
             models, brands = models_and_brands()
             return render(request, 'managerBuyCars.html',
