@@ -112,10 +112,14 @@ class RateBranch(View):
             comment = form.cleaned_data['comment']
             score = form.cleaned_data['score']
 
-            cursor = connection.cursor()
-            sql = "INSERT INTO branch_rate (customer_id, branch_id, comment, score) VALUES ({}, {}, '{}', {});".format(
-                customer_id, branch_id, comment, score)
-            cursor.execute(sql)
+            try:
+                print("asdjkgnkjadfnhkadf")
+                cursor = connection.cursor()
+                sql = "INSERT INTO branch_rate (customer_id, branch_id, comment, score) VALUES ({}, {}, '{}', {});".format(
+                    customer_id, branch_id, comment, score)
+                cursor.execute(sql)
+            except:
+                return redirect('/customer/error')
 
             form = BranchRate()
             context = {
@@ -314,6 +318,7 @@ class CustomerDashboard(View):
 
 
 class Error(View):
+
     def get(self, request):
         return render(request, 'error.html')
 
