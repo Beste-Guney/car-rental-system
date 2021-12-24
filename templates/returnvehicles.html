@@ -1,14 +1,13 @@
 {% extends 'customerbase.html' %}
 {% block content %}
 {% if request.session.user_type == 'customer' %}
-<div class="container-fluid">
+<div class="container">
     <div class="row mt-5">
-        <div class="col-sm-2">
-            <h3>Name: {{ name }}</h3>
+        <div class="col-sm-3">
             <h4>Status: {{ user_status }}</h4>
             <h4>Discont Rate: {{ discount_rate }}%</h4>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-9">
             <h1>Return Vehicle</h1>
             <table class="table">
                 <thead class="thead-dark">
@@ -42,14 +41,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-        </div>
-        <div class="col-sm-4">
-            <h4>Rate Vehicle</h4>
-            <form action="{% url 'customer:customer_rate_vehicle' %}" method="post">
-                {% csrf_token %}
-                {{ form }}
-                <button type="submit" class="btn btn-success mt-3">Evaluate</button>
-            </form>
         </div>
     </div>
 </div>

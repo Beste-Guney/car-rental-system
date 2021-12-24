@@ -1,6 +1,8 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
+from pymysql import IntegrityError
 
 from .forms import CarPlate, MakeReservationForm, VehicleRate, CreateRequestForm, BranchRate, ReservationNo, Pay
 from datetime import date
@@ -8,18 +10,40 @@ from datetime import date
 
 class PayVehicle(View):
 
-    def post(self, request):
+    def post(self, request, resno):
         form = Pay(request.POST)
 
         if form.is_valid():
-            return redirect('customer:customer_pay_vehicle', resno=form.cleaned_data['ReservationNo'])
+            branch_id = form.cleaned_data['branch']
+            money = form.cleaned_data['money']
+            plate = form.cleaned_data['plate']
+            required_payment = form.cleaned_data['required_payment']
+            res_no = form.cleaned_data['res_no']
+            required_payment = float(required_payment)
 
-        return self.get(request)
+            if required_payment != money:
+                messages.error(request, 'Please enter correct amount.')
+                return self.get(request, res_no)
+            else:
+                cursor = connection.cursor()
+                sql = "UPDATE branch SET budget = budget + {} where branch_id = {};".format(money, branch_id)
+                cursor.execute(sql)
+
+                sql = "update vehicle set status = 'available', branch_id = {} where license_plate =  '{}';".format(
+                    branch_id, plate)
+                cursor.execute(sql)
+
+                sql = "UPDATE reservation set status = 'paid' where reservation_number = {}".format(res_no)
+                cursor.execute(sql)
+                messages.success(request, 'Playment is taken. Thank you :)')
+                return self.get(request, res_no)
+
+        return redirect('/customer/error')
 
     def get(self, request, resno) -> 'html':
         user_id = request.session['logged_in_user']
         cursor = connection.cursor()
-        sql = "SELECT discount_rate, customer_name,customer_status FROM customer NATURAL JOIN user WHERE user_id ={}".format(
+        sql = "SELECT discount_rate, user_id,customer_status FROM customer_discount NATURAL JOIN user WHERE user_id ={}".format(
             user_id)
         cursor.execute(sql)
         user_data = cursor.fetchall()
@@ -36,8 +60,6 @@ class PayVehicle(View):
         cost = reservation[0][3]
 
         today = date.today()
-        print(today)
-        print(end_date)
         fee_time = abs((today - end_date).days)
 
         if fee_time > 0:
@@ -57,7 +79,7 @@ class PayVehicle(View):
             'penalty': penalty,
             'total': total,
             'discount': discount,
-            'final': total - discount,
+            'required_payment': total - discount,
             'form': form
         }
         return render(request, 'payVehicle.html', context)
@@ -81,13 +103,12 @@ class ReturnVehicle(View):
         cursor.execute(sql)
         active_res = cursor.fetchall()
 
-        sql = "SELECT discount_rate, customer_name,customer_status FROM customer NATURAL JOIN user WHERE user_id ={}".format(
+        sql = "SELECT discount_rate, user_id, customer_status FROM customer_discount NATURAL JOIN user WHERE user_id ={}".format(
             user_id)
         cursor.execute(sql)
         user_data = cursor.fetchall()
 
         discount_rate = user_data[0][0]
-        name = user_data[0][1]
         user_status = user_data[0][2]
 
         form = ReservationNo()
@@ -95,7 +116,6 @@ class ReturnVehicle(View):
             'old_res': active_res,
             'form': form,
             'discount_rate': discount_rate,
-            'name': name,
             'user_status': user_status
         }
         return render(request, 'returnvehicles.html', context)
@@ -119,20 +139,13 @@ class RateBranch(View):
                     customer_id, branch_id, comment, score)
                 cursor.execute(sql)
             except:
-                return redirect('/customer/error')
+                messages.error(request, 'You already evaluated this branch.')
+                return self.get(request)
 
-            form = BranchRate()
-            context = {
-                'form': form,
-                'message': 'Your evaluation is saved.'
-            }
-            return render(request, 'ratebranch.html', context)
-        form = BranchRate()
-        context = {
-            'form': form,
-            'message': 'Error occured. Try again later.'
-        }
-        return render(request, 'ratebranch.html', context)
+            messages.success(request, 'You evaluation is saved.')
+            return self.get(request)
+
+        return redirect('/customer/error')
 
     def get(self, request):
         form = BranchRate()
@@ -210,15 +223,16 @@ class RateCar(View):
             rate = form.cleaned_data['rate']
             user_id = request.session['logged_in_user']
             cursor = connection.cursor()
-            print(license_plate)
-            print(rate)
-            print(comment)
-            print(user_id)
-            sql = "INSERT INTO vehicle_rate (customer_id, license_plate, comment, score) " \
-                  "VALUES ({}, '{}', '{}', {});".format(user_id, license_plate, comment, rate)
-            cursor.execute(sql)
+            try:
+                sql = "INSERT INTO vehicle_rate (customer_id, license_plate, comment, score) " \
+                      "VALUES ({}, '{}', '{}', {});".format(user_id, license_plate, comment, rate)
+                cursor.execute(sql)
+            except:
+                messages.error(request, 'You already evaluated this vehicle.')
+                return self.get(request)
 
-        return self.get(request)
+            messages.success(request, 'Your evaluation is saved.')
+            return self.get(request)
 
     def get(self, request) -> 'html':
         user_id = request.session['logged_in_user']
@@ -263,12 +277,12 @@ class MakeReservation(View):
                 insurance_type = insurances[0][0]
 
             sql = """
-                INSERT INTO `reservation` 
-                (`start_date`, `end_date`, `status`, `cost`, `reserver`, 
-                `checked_by`, `isApproved`, `reason`, `insurance_type`, `license_plate`, `reserved_chauf_id`, `isChaufAccepted`) 
-                VALUES ('{}', '{}', 'not_accepted', '{}', '{}', NULL, 'false', '{}', '{}', '{}', {}, NULL);
-            """.format(start_date, end_date, cost, reserver_id, reason, insurance_type, license_plate,
-                       chauffeur_id)
+            INSERT INTO `reservation` 
+            (`start_date`, `end_date`, `status`, `cost`, `reserver`, 
+            `checked_by`, `isApproved`, `reason`, `insurance_type`, `license_plate`, `reserved_chauf_id`, `isChaufAccepted`) 
+            VALUES ('{}', '{}', 'not_accepted', '{}', '{}', NULL, 'false', '{}', '{}', '{}', {}, NULL);
+        """.format(start_date, end_date, cost, reserver_id, reason, insurance_type, license_plate,
+                   chauffeur_id)
 
             print(sql)
             cursor.execute(sql)

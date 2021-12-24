@@ -11,7 +11,6 @@
                     <th scope="col">Vehicle Plate</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">End Date</th>
-                    ,
                     <th scope="col">Cost</th>
                 </tr>
                 </thead>
@@ -35,6 +34,7 @@
                 {{ form }}
                 <button type="submit" class="btn btn-success mt-3">Evaluate</button>
             </form>
+            {% include 'messages.html' %}
         </div>
     </div>
 </div>

@@ -16,9 +16,9 @@ class Pay(forms.Form):
     branchs = cursor.fetchall()
 
     branch = forms.CharField(label="Pick a Branch", widget=forms.Select(choices=branchs))
-    money = forms.IntegerField()
+    money = forms.FloatField(required=True)
     plate = forms.CharField(widget=forms.HiddenInput())
-    total = forms.CharField(widget=forms.HiddenInput())
+    required_payment = forms.CharField(widget=forms.HiddenInput())
     res_no = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
