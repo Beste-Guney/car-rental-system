@@ -1,0 +1,42 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+{% if request.session.user_type == 'customer' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-8">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Vehicle Plate</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Cost</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for res in old_res %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ res.10 }}</td>
+                    <td>{{ res.1 }}</td>
+                    <td>{{ res.2 }}</td>
+                    <td>{{ res.4 }}$</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-4">
+            <h4>Create Transfer Request</h4>
+            <form action="{% url 'customer:customer_rate_vehicle' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn btn-success mt-3">Evaluate</button>
+            </form>
+            {% include 'messages.html' %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

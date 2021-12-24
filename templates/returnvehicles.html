@@ -1,0 +1,48 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+{% if request.session.user_type == 'customer' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-3">
+            <h4>Status: {{ user_status }}</h4>
+            <h4>Discont Rate: {{ discount_rate }}%</h4>
+        </div>
+        <div class="col-sm-9">
+            <h1>Return Vehicle</h1>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Vehicle Plate</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Cost</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Penalty</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for res in old_res %}
+                <tr>
+                    <th scope="row">{{ res.0 }}</th>
+                    <td>{{ res.1 }}</td>
+                    <td>{{ res.2 }}</td>
+                    <td>{{ res.3 }}</td>
+                    <td>{{ res.4 }}$</td>
+                    <td>{{ res.5 }}</td>
+                    <td>
+                        <form action="{% url 'customer:customer_return_vehicle' %}" method='post'>
+                            {% csrf_token %}
+                            <input type='hidden' name="ReservationNo" value="{{ res.0 }}"/>
+                            <button type="submit" class="btn btn-success">Pay</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

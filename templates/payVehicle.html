@@ -1,0 +1,32 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+{% if request.session.user_type == 'customer' %}
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-sm-4">
+            <h4>Pay Reservation</h4>
+            <p>Reservation No: {{ res_no }}</p>
+            <p>License Plate: {{ license_plate }}</p>
+
+            <p>Cost: {{ cost }}</p>
+            <p>Penalty: {{ penalty }}</p>
+            <p>Total: {{ total }}</p>
+            <p>Discount Rate: {{ discount_rate }}</p>
+            <p>Final: {{ total }} - {{ discount }} = {{ required_payment }}</p>
+        </div>
+        <div class="col-sm-8">
+            <h4>Pay</h4>
+            <form action="{% url 'customer:customer_pay_vehicle' 3 %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input type='hidden' name="res_no" value="{{ res_no }}"/>
+                <input type='hidden' name="plate" value="{{ license_plate }}"/>
+                <input type='hidden' name="required_payment" value="{{ required_payment }}"/>
+                <button type="submit" class="btn btn-success mt-3">PAY</button>
+            </form>
+            {% include 'messages.html' %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

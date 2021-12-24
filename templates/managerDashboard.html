@@ -1,0 +1,39 @@
+{% extends 'baseManager.html' %}
+{% load static %}
+{% block content %}
+
+    {% if request.session.user_type == 'manager' %}
+        <div class="container">
+            <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                    </div>
+                    <div class="col-sm">
+                        <img src="{% static 'Burhan_Altıntop.jpeg' %}" width="100%" style="border-radius:10px;margin: 30px 10px 10px 10px;">
+                    </div>
+                    <div class="col-sm">
+                    </div>
+
+                  </div>
+                <div class="row">
+                    <div class="col-sm">
+                    </div>
+                    <div class="col-sm">
+                        <div class="card" style="width: 100%;">
+                              <div class="card-body" >
+                                <h5 class="card-title">{{ name}}</h5>
+                                <p class="card-text" >This is manager profile, from navigation bar you can go anywhere.</p>
+                                <p class="card-text"> You are manager of {{ branch_name }}</p>
+                              </div>
+                            </div>
+                    </div>
+                    <div class="col-sm">
+                    </div>
+                </div>
+                </div>
+        </div>
+
+    {% else %}
+        <p>You cannot access this page</p>
+    {% endif %}
+{% endblock %}
