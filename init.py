@@ -241,12 +241,12 @@ try:
     print("Damage_Report table created successfully")
 
     result = cursor.execute("""create table request(
-                req_id int not null,
+                req_id int not null auto_increment,
                 made_by_customer int not null,
                 from_branch int not null,
                 to_branch int not null,
                 requested_vehicle varchar(8) not null,
-                checked_by_employee int not null,
+                checked_by_employee int,
                 isApproved boolean,
                 reason varchar(50),
                 FOREIGN KEY (made_by_customer) REFERENCES customer(user_id),
