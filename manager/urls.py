@@ -1,3 +1,4 @@
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from manager.views import *
 
@@ -12,5 +13,6 @@ urlpatterns = [
     path('addChauffeur/', AddChauffeurView.as_view(), name='add-chauffeur'),
     path('addDamageExpert/', AddDamageExpertView.as_view(), name='add-damage-expert'),
     path('filterCars/', FilterView.as_view(), name='filter-vehicle'),
-    path('filterCarsBuy/', FilterForBuyingView.as_view(), name='filter-vehicle-buy')
+    path('filterCarsBuy/', FilterForBuyingView.as_view(), name='filter-vehicle-buy'),
+    path("logout/", LogoutView.as_view(), name="logout")
 ]

@@ -1,3 +1,4 @@
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from employee.views import *
 
@@ -7,5 +8,5 @@ urlpatterns = [
     path('employeeReservations/', ReservationView.as_view(), name='view-reservations'),
     path('ajaxAcceptReservation/', accept_reservation, name='accept-reservation'),
     path('ajaxDeclineReservation/', decline_reservation, name='decline-reservation'),
-
+    path("logout/", LogoutView.as_view(), name="logout")
 ]
