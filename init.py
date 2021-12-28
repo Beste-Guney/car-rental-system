@@ -3,9 +3,9 @@ from mysql.connector import Error
 
 try:
     connection = mysql.connector.connect(host='127.0.0.1',
-                                         database='rental2',
+                                         database='rental3',
                                          user='root',
-                                         password='123')
+                                         password='root')
 
     if connection.is_connected():
         db_Info = connection.get_server_info()

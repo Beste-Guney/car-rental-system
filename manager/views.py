@@ -589,6 +589,7 @@ class FilterForBuyingView(View):
         #taking filtering conditions from post
         license = request.POST['license']
         age = request.POST['age-vehicle']
+        print(age)
         model = request.POST['model-vehicle']
         kilometers = request.POST['kilometers']
         brand = request.POST['brand']
@@ -612,10 +613,10 @@ class FilterForBuyingView(View):
         else:
                 # filtering according to other conditions
             if int(age) != -1:
-                print('here1')
                 upper_bound = int(age) + 5
                 cursor.execute(
-                        'create view filter1 as select * from vehicle where status = \'onsale\' and age between\'' + str(age) + '\'and \'' + str(upper_bound) +'\';'
+                    'create view filter1 as select * from vehicle where status = \'onsale\' and age between ' + str(
+                        age) + ' and ' + str(upper_bound) + ' ;'
                 )
 
             else:
@@ -635,8 +636,6 @@ class FilterForBuyingView(View):
                 )
 
             if int(kilometers) != -1:
-                print('here3')
-
                 if int(kilometers) == 40000:
                     cursor.execute(
                             'create view filter3 as '

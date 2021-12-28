@@ -36,7 +36,7 @@
                          <option value="40000">40000-more</option>
                     </select>
                     <select name='brand' class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
-                        <option value="-1" selected>Brand</option>
+                        <option value="empty" selected>Brand</option>
                          {% for brand in brands %}
                             <option value={{ brand }}>{{ brand }}</option>
                         {% endfor %}
@@ -68,7 +68,7 @@
                 </div>
                     {% else %}
                                     <div class="col-sm">
-                    <img style="text-align: center;" src="res/images/vehiclesImages/car1.jpeg" width="150" height="150"
+                    <img style="text-align: center;" src="{% static 'car1.jpeg' %}" width="150" height="150"
                         alt="">
                     <p class="mt-2 m-1 "><b>Plate: </b>{{ car.0 }}</p>
                     <p class="m-1"><b>Model: </b>{{ car.3 }}</p>
