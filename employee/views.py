@@ -66,7 +66,7 @@ class RequestsView(View):
         #getting reservations
         cursor = connection.cursor()
         cursor.execute(
-            'select customer.customer_name, B1.branch_name, B2.branch_name, request.requested_vehicle, request.reason, request.req_id, request.isApproved '
+            'select customer.customer_name, B1.branch_name, B2.branch_name, request.requested_vehicle, request.reason, request.req_id, request.isApproved, request.to_branch '
             #'from request where request.checked_by_employee = ' + str(user_id) + ';'
             'from request, customer, branch B1, branch B2 where request.made_by_customer = customer.user_id and '
             'B1.branch_id = request.from_branch and B2.branch_id = request.to_branch;'
@@ -112,8 +112,15 @@ def accept_request(request):
 
     #changing the status of request
     cursor = connection.cursor()
+    cursor.execute('select requested_vehicle, to_branch from request where req_id = \'' + str(request_id) + '\';')
+    result = cursor.fetchall()
+    for res in result:
+            print(res)
+
     cursor.execute('update request set isApproved = 1  where req_id = \'' + str(request_id) + '\';')
     cursor.execute('update request set checked_by_employee = ' + str(employee_id) + '  where req_id = \'' + str(request_id) + '\';')
+    cursor.execute('update vehicle set branch_id = ' + str(result[0][1]) + '  where license_plate = \'' + str(result[0][0]) + '\';')
+
     data = {}
     return JsonResponse(data)
 
