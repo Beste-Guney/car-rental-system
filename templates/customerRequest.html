@@ -1,0 +1,56 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+{% if request.session.user_type == 'customer' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-1"></div>
+       <div class="col-sm-6">
+            <h1> Create Transfer Request</h1>
+            <form action="{% url 'customer:customer_create_request' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn btn-success mt-3">Request</button>
+            </form>
+            {% include 'messages.html' %}
+            <p class="mt-3" style="color:green;">{{ message }}</p>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4">
+            <h2>Previous Requests</h2>
+            {% for request in old_req %}
+                {% if forloop.counter|divisibleby:"5" %}
+                    <div class="row mt-4">
+                                    <p class="col-sm">
+                    <p class="mt-2 m-1 "><b>Car: </b>{{ request.4 }}</p>
+                    <p class="mt-2 m-1 "><b>From Branch: </b>{{ request.9 }}</p>
+                    <p class="m-1"><b>To Branch: </b> {{ request.11}}</p>
+                    <p class="m-1"><b>Status: </b>
+                        {% if request.6 == 1 %}
+                            Accepted
+                            {% else %}
+                            Not Accepted
+                            {% endif %}</p>
+                    <p class="m-1"><b>Reason: </b>{{ request.7 }}</p>
+                </div>
+                    {% else %}
+                                    <div class="col-sm">
+                    <p class="col-sm">
+                        <p class="mt-2 m-1 "><b>Car: </b>{{ request.4 }}</p>
+                        <p class="mt-2 m-1 "><b>From Branch: </b>{{ request.9 }}</p>
+                        <p class="m-1"><b>To Branch: </b> {{ request.11}}</p>
+                        <p class="m-1"><b>Status: </b>
+                            {% if request.6 == 1 %}
+                                Accepted
+                                {% else %}
+                                Not Accepted
+                                {% endif %}</p>
+                        <p class="m-1"><b>Reason: </b>{{ request.7 }}</p>
+                </div>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

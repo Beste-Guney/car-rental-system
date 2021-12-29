@@ -241,12 +241,12 @@ try:
     print("Damage_Report table created successfully")
 
     result = cursor.execute("""create table request(
-                req_id int not null,
+                req_id int not null auto_increment,
                 made_by_customer int not null,
                 from_branch int not null,
                 to_branch int not null,
                 requested_vehicle varchar(8) not null,
-                checked_by_employee int not null,
+                checked_by_employee int,
                 isApproved boolean,
                 reason varchar(50),
                 FOREIGN KEY (made_by_customer) REFERENCES customer(user_id),
@@ -404,7 +404,7 @@ try:
 
     # reservation
     result = cursor.execute(
-        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")  
 
     # chauffeur
     result = cursor.execute("""insert into chauffeur values(107, "car", 20);""")

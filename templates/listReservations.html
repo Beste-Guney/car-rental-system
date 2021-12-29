@@ -20,28 +20,38 @@
                 {% if forloop.counter|divisibleby:"5" %}
                     <div class="row mt-4">
                                     <p class="col-sm">
-                    <p class="mt-2 m-1 "><b>Id: </b>{{ reserve.0 }}</p>
+                    <p class="mt-2 m-1 "><b>Car: </b>{{ reserve.10 }}</p>
                     <p class="mt-2 m-1 "><b>Start Date: </b>{{ reserve.1 }}</p>
                     <p class="m-1"><b>End Date: </b> {{ reserve.2}}</p>
-                    <p class="m-1"><b>Status: </b>{{ reserve.3 }}</p>
-                    <p class="m-1"><b>Cost: </b>{{ car.5 }}</p>
-                    <p class="m-1"><b>Chauffer: </b>
-                        {% if car.6  %}
-                            {{ car.6 }}</p>
+                    <p class="m-1"><b>Status: </b>
+                        {% if reserve.3 == "not_accepted" %}
+                            Not Accepted
+                            {% else %}
+                            Accepted
+                            {% endif %}</p>
+                    <p class="m-1"><b>Cost: </b>${{ reserve.4 }}</p>
+                    <p class="m-1"><b>Chauffeur: </b>
+                        {% if reserve.11  %}
+                            {{ reserve.11 }}</p>
                             {% else %}
                             There is no chauffeur for this reservation</p>
                             {% endif %}
                 </div>
                     {% else %}
                                     <div class="col-sm">
-                    <p class="mt-2 m-1 "><b>Id: </b>{{ reserve.0 }}</p>
+                    <p class="mt-2 m-1 "><b>Car: </b>{{ reserve.10 }}</p>
                     <p class="mt-2 m-1 "><b>Start Date: </b>{{ reserve.1 }}</p>
                     <p class="m-1"><b>End Date: </b> {{ reserve.2}}</p>
-                    <p class="m-1"><b>Status: </b>{{ reserve.3 }}</p>
-                    <p class="m-1"><b>Cost: </b>{{ car.5 }}</p>
-                    <p class="m-1"><b>Chauffer: </b>
-                        {% if car.6  %}
-                            {{ car.6 }}</p>
+                    <p class="m-1"><b>Status: </b>
+                        {% if reserve.3 == "not_accepted" %}
+                            Not Accepted
+                            {% else %}
+                            Accepted
+                            {% endif %}</p>
+                    <p class="m-1"><b>Cost: </b>${{ reserve.4 }}</p>
+                    <p class="m-1"><b>Chauffeur: </b>
+                        {% if reserve.11  %}
+                            {{ reserve.11 }}</p>
                             {% else %}
                             There is no chauffeur for this reservation</p>
                             {% endif %}

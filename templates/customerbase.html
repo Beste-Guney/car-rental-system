@@ -20,8 +20,9 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <img src="{% static 'icon.png' %}" alt="" width="50" height="50" class="d-inline-block align-text-top">
-        <a class="navbar-brand" href="#">CaRent</a>
+        <a href="{% url 'customer:customer_dashboard' %}">
+        <img src="{% static 'icon.png' %}" alt="" width="50" height="50" class="d-inline-block align-text-top"> </a>
+        <a class="navbar-brand" href="{% url 'customer:customer_dashboard' %}">CaRent</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -36,7 +37,7 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'customer:customer_dashboard' %}">Vehicles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'customer:customer_dashboard' %}">Create
+                    <a class="nav-link active" aria-current="page" href="{% url 'customer:customer_create_request' %}">Create
                         Request</a>
                 </li>
                 <li class="nav-item">
@@ -50,6 +51,9 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'customer:customer_return_vehicle' %}">Return
                         Vehicle</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'customer:logout' %}">Logout</a>
                 </li>
             </ul>
         </div>

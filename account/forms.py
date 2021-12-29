@@ -7,7 +7,7 @@ from django.db import connection
 
 class UserLoginForm(forms.Form):
     email = forms.EmailField(label='Enter email')
-    password = forms.CharField(label='Enter your password')
+    password = forms.CharField(label='Enter your password', widget=forms.PasswordInput)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
