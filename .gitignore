@@ -6,7 +6,6 @@ __pycache__/
 *$py.class
 db.sqlite3
 log.django
-settings.py
 
 # C extensions
 *.so
