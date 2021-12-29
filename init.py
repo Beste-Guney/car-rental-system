@@ -5,7 +5,7 @@ try:
     connection = mysql.connector.connect(host='127.0.0.1',
                                          database='rental2',
                                          user='root',
-                                         password='123')
+                                         password='06Ay0035')
 
     if connection.is_connected():
         db_Info = connection.get_server_info()
@@ -404,9 +404,7 @@ try:
 
     # reservation
     result = cursor.execute(
-        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
-    result = cursor.execute(
-        """insert into reservation values(1, STR_TO_DATE("12-28-2021","%m-%d-%Y"), STR_TO_DATE("12-29-2021","%m-%d-%Y"), "paid", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")    
+        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")  
 
     # chauffeur
     result = cursor.execute("""insert into chauffeur values(107, "car", 20);""")
