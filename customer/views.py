@@ -164,34 +164,36 @@ class CreateRequest(View):
         if form.is_valid():
             user_id = request.session['logged_in_user']
             license_plate = form.cleaned_data['license_plate']
-            from_branch = form.cleaned_data['from_branch']
             to_branch = form.cleaned_data['to_branch']
             reason = form.cleaned_data['reason']
             cursor = connection.cursor()
+
+            sql = """SELECT branch_id FROM vehicle WHERE license_plate = "{}";""".format(license_plate)
+            cursor.execute(sql)
+            from_branch = cursor.fetchall()
             sql = "INSERT INTO request " \
                   "(req_id, made_by_customer, from_branch, to_branch, requested_vehicle, checked_by_employee, isApproved, reason) " \
-                  "VALUES (NULL, {}, {}, {}, '{}', NULL, NULL, '{}');".format(user_id, from_branch, to_branch,
+                  "VALUES (NULL, {}, {}, {}, '{}', NULL, NULL, '{}');".format(user_id, from_branch[0][0], to_branch,
                                                                               license_plate, reason)
             cursor.execute(sql)
-            cursor = connection.cursor()
-            sql = "SELECT * FROM `reservation` WHERE reserver = {} and status = 'paid';".format(user_id)
+            sql = "SELECT * FROM request, (SELECT branch_id, branch_name FROM branch) AS from_branch_name, (SELECT branch_id, branch_name FROM branch) AS to_branch_name WHERE from_branch = from_branch_name.branch_id and to_branch = to_branch_name.branch_id and made_by_customer = {};".format(user_id)
             cursor.execute(sql)
-            old_res = cursor.fetchall()
+            old_req = cursor.fetchall()
             form = CreateRequestForm()
             context = {
-                'old_res': old_res,
+                'old_req': old_req,
                 'form': form,
-                'message': 'Request is taken.'
+                'message': 'Request is taken.',
             }
             return render(request, 'customerRequest.html', context)
 
         cursor = connection.cursor()
-        sql = "SELECT * FROM `reservation` WHERE reserver = {} and status = 'paid';".format(user_id)
+        sql = "SELECT * FROM request, (SELECT branch_id, branch_name FROM branch) AS from_branch_name, (SELECT branch_id, branch_name FROM branch) AS to_branch_name WHERE from_branch = from_branch_name.branch_id and to_branch = to_branch_name.branch_id and made_by_customer = {};".format(user_id)
         cursor.execute(sql)
-        old_res = cursor.fetchall()
+        old_req = cursor.fetchall()
         form = CreateRequestForm()
         context = {
-            'old_res': old_res,
+            'old_req': old_req,
             'form': form,
             'message': 'Error occured.'
         }
@@ -200,12 +202,12 @@ class CreateRequest(View):
     def get(self, request) -> 'html':
         user_id = request.session['logged_in_user']
         cursor = connection.cursor()
-        sql = "SELECT * FROM `reservation` WHERE reserver = {} and status = 'paid';".format(user_id)
+        sql = "SELECT * FROM request, (SELECT branch_id, branch_name FROM branch) AS from_branch_name, (SELECT branch_id, branch_name FROM branch) AS to_branch_name WHERE from_branch = from_branch_name.branch_id and to_branch = to_branch_name.branch_id and made_by_customer = {};".format(user_id)
         cursor.execute(sql)
-        old_res = cursor.fetchall()
+        old_req = cursor.fetchall()
         form = CreateRequestForm()
         context = {
-            'old_res': old_res,
+            'old_req': old_req,
             'form': form,
             'message': ''
         }

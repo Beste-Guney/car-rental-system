@@ -50,9 +50,16 @@ class CreateRequestForm(forms.Form):
     cursor = connection.cursor()
     cursor.execute(sql)
     branchs = cursor.fetchall()
-
-    license_plate = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '12EE345'}))
-    from_branch = forms.CharField(label="From", widget=forms.Select(choices=branchs))
+    sql = "SELECT license_plate FROM vehicle WHERE branch_id is not NULL;"
+    cursor.execute(sql)
+    vehicles = cursor.fetchall()
+    i = 1
+    vehicleChoices = ()
+    while i <= len(vehicles):
+        vehicleChoices += ((*vehicles[i-1], *vehicles[i-1]),) 
+        i = i + 1
+    #license_plate = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '12EE345'}))
+    license_plate = forms.CharField(label="License Plate", widget=forms.Select(choices=vehicleChoices))
     to_branch = forms.CharField(label="To", widget=forms.Select(choices=branchs))
     reason = forms.CharField(widget=forms.Textarea(attrs={'name': 'body', 'rows': 2, 'cols': 2}))
 
