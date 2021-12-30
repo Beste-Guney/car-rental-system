@@ -4,34 +4,59 @@
 
     {% if request.session.user_type == 'manager' %}
         <div class="container">
-            <div class="container">
-                  <div class="row">
-                    <div class="col-sm">
-                    </div>
-                    <div class="col-sm">
-                        <img src="{% static 'Burhan_Altıntop.jpeg' %}" width="100%" style="border-radius:10px;margin: 30px 10px 10px 10px;">
-                    </div>
-                    <div class="col-sm">
-                    </div>
+          <div class="row">
+            <div class="col-lg">
+                <table class="table">
+              <thead>
+               The employees who made the most expensive sale of the month
+                <tr>
+                  <th scope="col">Employee Name</th>
+                    <th scope="col">Reservation Month</th>
+                  <th scope="col">Cost of Reservation</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for key,value in expensive_rents.items %}
+                  <tr>
+                  <th scope="row">{{ value.0 }}</th>
+                  <td>{{ key }}</td>
+                  <td>{{ value.1 }}</td>
+                </tr>
+              {% endfor %}
 
-                  </div>
-                <div class="row">
-                    <div class="col-sm">
-                    </div>
-                    <div class="col-sm">
-                        <div class="card" style="width: 100%;">
-                              <div class="card-body" >
-                                <h5 class="card-title">{{ name}}</h5>
-                                <p class="card-text" >This is manager profile, from navigation bar you can go anywhere.</p>
-                                <p class="card-text"> You are manager of {{ branch_name }}</p>
-                              </div>
-                            </div>
-                    </div>
-                    <div class="col-sm">
-                    </div>
-                </div>
-                </div>
+              </tbody>
+            </table>
+
+            </div>
+          </div></div>
         </div>
+        <div class="container">
+         <div class="row">
+            <div class="col-lg">
+                <table class="table">
+              <thead>
+               The counts of each employees' reject and approve rate
+                <tr>
+                  <th scope="col">Employee Name</th>
+                    <th scope="col">Operation</th>
+                  <th scope="col">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for key,value in approve_deny.items %}
+                  <tr>
+                  <th scope="row">{{ key }}</th>
+                  <td>{{ value.1 }}</td>
+                  <td>{{ value.0 }}</td>
+                </tr>
+              {% endfor %}
+
+              </tbody>
+            </table>
+
+            </div>
+          </div></div>
+</div>
 
     {% else %}
         <p>You cannot access this page</p>

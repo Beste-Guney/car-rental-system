@@ -13,6 +13,24 @@
                 {{ form.as_p }}
             <input type="submit" class='btn btn-primary mt-3 btn-lg btn-block'value="Submit">
             </form>
+                <br>
+                <div>
+                <ul>
+                    Don't you have an account? Let's sign in.
+                    <li>
+                       <a href="{% url 'customer_register' %}">  Sign up as a customer </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'branchemployee-register' %}"> Sign up as an regular employee </a>
+                    </li>
+                    <li>
+                       <a href="{% url 'chauffeur-register' %}">Sign up as a chauffeur</a>
+                    </li>
+                    <li>
+                         <a href="{% url 'damageexpert-register' %}">Sign up as a damage expert</a>
+                    </li>
+                </ul>
+            </div></div>
            </div>
         </div>
     </div>

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+    <div class="row mt-5">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <h1 style="text-align: center;font-size: 20px;" class="display-1" >Branch Employee Register Page</h1>
+            <form action="{% url 'branchemployee-register' %}" method="post">
+            {% csrf_token %}
+                {{ form.as_p }}
+            <input type="submit" class='btn btn-primary mt-3 btn-lg btn-block'value="Submit">
+            </form></div>
+                <div class="col-3"></div>
+
+    </div>
+{% endblock %}
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+

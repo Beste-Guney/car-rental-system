@@ -5,11 +5,16 @@ from django.contrib import messages
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-si0$5&+v9q6dru&bv84#hh+#73e_kz2!39#6o=i$*f^k^&8_se'
+
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-SECRET_KEY = 'vy$%rzk1mr%q%p$f-!f*#s_40-c0#ttv67tn#sr^mli$5!q&p2'
 
 # Application definition
 
@@ -64,9 +69,9 @@ WSGI_APPLICATION = 'car_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rental2',
+        'NAME': 'rental3',
         'USER': 'root',
-        'PASSWORD': '06Ay0035',
+        'PASSWORD': 'root',
         'HOST': '127.0.0.1',   # Or an IP Address that your DB is hosted on 127.0.0.1 or localhost
         'PORT': '3306',
     }

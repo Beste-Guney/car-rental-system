@@ -3,7 +3,7 @@ from django.views import View
 from django.db import connection
 from django.http import JsonResponse
 from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, DamageExpertCreationForm
-
+import datetime
 
 # Create your views here.
 # def createModelBrandTable():
@@ -22,30 +22,35 @@ from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, Dam
 #
 #     return 'Vehicle created'
 
+def get_branch_employee_info(manager_id):
+    cursor = connection.cursor()
+    cursor.execute(
+        'select * from employee,manager where employee.user_id = manager.user_id and manager.user_id = ' + str(
+            manager_id) + '; '
+    )
+    result = cursor.fetchall()
+    for res in result:
+        print(res)
+    result = result[0]
+    branch_id = result[3]
+    employee_name = result[2]
+
+    # finding the branch
+    cursor.execute(
+        'select * from branch where branch_id=\'' + str(branch_id) + '\''
+    )
+    result = cursor.fetchall()
+    result = result[0]
+    branch_name = result[2]
+
+    return branch_id, branch_name, employee_name
 
 class ManagerMainPage(View):
     # createModelBrandTable()
     # createVehicleTable()
 
     def get(self, request, manager_id):
-        cursor = connection.cursor()
-        cursor.execute(
-            'select * from employee,manager where employee.user_id = manager.user_id and manager.user_id = ' + str(manager_id) + '; '
-        )
-        result = cursor.fetchall()
-        for res in result:
-            print(res)
-        result = result[0]
-        branch_id = result[3]
-        employee_name = result[2]
-
-        # finding the branch
-        cursor.execute(
-            'select * from branch where branch_id=\'' + str(branch_id) + '\''
-        )
-        result = cursor.fetchall()
-        result = result[0]
-        branch_name = result[2]
+        branch_id, branch_name, employee_name = get_branch_employee_info()
 
         return render(request, 'managerDashboard.html',
                       {'branch_id': branch_id, 'branch_name': branch_name, 'name': employee_name})
@@ -691,6 +696,71 @@ class FilterForBuyingView(View):
             models, brands = models_and_brands()
             return render(request, 'managerBuyCars.html',
                               {'vehicles': vehicle_info, 'branch_id': branch_id, 'models': models, 'brands': brands})
+
+
+class StatisticsView(View):
+    def get(self, request, manager_id):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(manager_id)
+
+
+        # for the first statistic on the main page
+        # retriveing the name of the employee with the most expensive reservation at each month
+
+        most_expensive_rent_of_month = {}
+
+        # finding the branch id information
+        cursor = connection.cursor()
+        cursor.execute(
+            'select B.user_id, (select employee_name from employee where employee.user_id = B.user_id) as name, T.cost, T.start_date from branch_employee B, (select reservation_number, checked_by, max(cost) as cost, start_date  from reservation group by month(start_date)) as T where T.checked_by = B.user_id and (select branch_id from employee where employee.user_id = B.user_id) = ' + str(branch_id) + ';'
+        )
+        result = cursor.fetchall()
+        for res in result:
+            month = ''
+            if res[3].month == 12:
+                month = 'December'
+            elif res[3].month == 11:
+                month = 'November'
+            elif res[3].month == 10:
+                month = 'October'
+            elif res[3].month == 9:
+                month = 'September'
+            elif res[3].month == 8:
+                month = 'August'
+            elif res[3].month == 7:
+                month = 'July'
+            elif res[3].month == 6:
+                month = 'June'
+            elif res[3].month == 5:
+                month = 'May'
+            elif res[3].month == 4:
+                month = 'April'
+            elif res[3].month == 3:
+                month = 'March'
+            elif res[3].month == 2:
+                month = 'February'
+            else:
+                month = 'January'
+            most_expensive_rent_of_month[month] = [res[1], res[2]]
+
+        # for the second statistic on the main page
+        # retrieving the name of the employee with number of approves, rejects of reservations
+        cursor.execute(
+        'select count(*) as operation_number, status, (select employee_name from employee where employee.user_id = B.user_id) as name from branch_employee B , reservation R where B.user_id = R.checked_by and (select branch_id from employee where employee.user_id = B.user_id)  = ' + str(branch_id) + ' group by status having count(*) > 0;'
+        )
+        result = cursor.fetchall()
+        number_of_approvals_denials = {}
+        for res in result:
+            number_of_approvals_denials[res[2]] = [res[0], res[1]]
+
+
+        context = {
+            'branch_id':branch_id, 'branch_name':branch_name, 'employee_name':employee_name,
+            'expensive_rents': most_expensive_rent_of_month,
+            'approve_deny': number_of_approvals_denials
+        }
+
+        return render(request, 'managerDashboard.html', context)
 
 
 

@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.views import View
-from account.forms import CustomerCreationForm, UserLoginForm
+from account.forms import *
 from customer.views import CustomerDashboard
 
 
@@ -158,18 +158,6 @@ class RegisterCustomer(View):
 
 
 class LoginView(View):
-    # creating related tables at db
-    # createUserTable()
-    # createCustomerTable()
-    # createEmployeeTable()
-    # createBranchEmployeeTable()
-    # createManagerTable()
-    # createDamageExpertTable()
-    # createChauffeurTable()
-    # createBranchTable()
-
-    # alterEmployee()
-
     # post request
     def post(self, request):
         form = UserLoginForm(request.POST)
@@ -239,3 +227,149 @@ class LoginView(View):
         form = UserLoginForm()
         context = {'form': form}
         return render(request, 'login.html', context)
+
+
+class RegisterBranchEmployeeView(View):
+    def get(self, request):
+        form = BranchEmployeeCreationForm()
+        context = {'form': form}
+        return render(request, 'branchEmployeeRegister.html', context)
+
+    def post(self, request):
+        form = BranchEmployeeCreationForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            salary = form.cleaned_data['salary']
+            address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+            branch = form.cleaned_data['branch']
+
+            cursor = connection.cursor()
+            cursor.execute(
+                'insert into user(email, password, address, phone_number) values(\'' + email + '\',\'' + password + '\',\'' + address + '\',\'' + phone_number + '\');'
+            )
+
+            cursor2 = connection.cursor()
+            cursor2.execute(
+                'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
+            )
+            desc = cursor2.fetchall()
+            desc = desc[0]
+            user_id = desc[0]
+
+            # inserting into employee tables
+            print('insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch) + '\' );'
+                  )
+            cursor.execute(
+                'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch) + '\' );')
+
+            cursor.execute(
+                'insert into branch_employee(user_id, years_of_work) values(' + str(
+                    user_id) + ',' + str(0) + ');'
+            )
+            return redirect('login_user')
+        else:
+            form = BranchEmployeeCreationForm()
+            context = {'form': form}
+            return render(request, 'branchEmployeeRegister.html', context)
+
+class RegisterChaeffeurView(View):
+    def get(self, request):
+        form = ChauffeurCreationForm()
+        context = {'form': form}
+        return render(request, 'chauffeurRegister.html', context)
+
+    def post(self, request):
+        form = ChauffeurCreationForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            salary = form.cleaned_data['salary']
+            address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+            branch = form.cleaned_data['branch']
+            years = form.cleaned_data['years']
+            car_type = form.cleaned_data['car_type']
+
+            cursor = connection.cursor()
+            cursor.execute(
+                'insert into user(email, password, address, phone_number) values(\'' + email + '\',\'' + password + '\',\'' + address + '\',\'' + phone_number + '\');'
+            )
+
+            cursor2 = connection.cursor()
+            cursor2.execute(
+                'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
+            )
+            desc = cursor2.fetchall()
+            desc = desc[0]
+            user_id = desc[0]
+
+            # inserting into employee tables
+            cursor.execute(
+                'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch) + '\' );')
+
+            cursor.execute(
+                'insert into chauffeur(user_id, drive_car_type, driving_years) values(' + str(
+                    user_id) + ',\'' + car_type + '\',' + str(years) + ');'
+            )
+
+            return redirect('login_user')
+        else:
+            form = ChauffeurCreationForm()
+            context = {'form': form}
+            return render(request, '.html', context)
+
+class RegisterDamageExpert(View):
+    def get(self, request):
+        form = DamageExpertCreationForm()
+        context = {'form': form}
+        return render(request, 'damageExpertCreate.html', context)
+
+    def post(self, request):
+        form = DamageExpertCreationForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            salary = form.cleaned_data['salary']
+            address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+            branch = form.cleaned_data['branch']
+            car_type = form.cleaned_data['car_type']
+
+            cursor = connection.cursor()
+            cursor.execute(
+                'insert into user(email, password, address, phone_number) values(\'' + email + '\',\'' + password + '\',\'' + address + '\',\'' + phone_number + '\');'
+            )
+
+            cursor2 = connection.cursor()
+            cursor2.execute(
+                'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
+            )
+            desc = cursor2.fetchall()
+            desc = desc[0]
+            user_id = desc[0]
+
+            # inserting into employee tables
+            cursor.execute(
+                'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch) + '\' );')
+
+            cursor.execute(
+                'insert into damage_expertise(user_id, interest_car_type) values(' + str(
+                    user_id) + ',\'' + car_type + '\');'
+            )
+            return redirect('login_user')
+        else:
+            form = DamageExpertCreationForm()
+            context = {'form': form}
+            return render(request, 'damageExpertCreate.html', context)

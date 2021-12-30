@@ -4,7 +4,7 @@ from manager.views import *
 
 app_name = 'manager'
 urlpatterns = [
-    path('managerDashboard/<int:manager_id>', ManagerMainPage.as_view(), name='manager_dashboard'),
+    path('managerDashboard/<int:manager_id>', StatisticsView.as_view(), name='manager_dashboard'),
     path('branchCars/<int:branch_id>', BranchCarView.as_view(), name='cars_at_branch'),
     path('buyCar/<int:branch_id>', BuyCarView.as_view(), name='buy-available-cars'),
     path('ajax/buyCar', ajaxBuyCar, name='ajax_buy_car'),

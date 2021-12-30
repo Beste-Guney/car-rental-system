@@ -404,7 +404,22 @@ try:
 
     # reservation
     result = cursor.execute(
-        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")  
+        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+
+    result = cursor.execute(
+        """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+
+    result = cursor.execute(
+        """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("13-27-2021","%m-%d-%Y"), "not_accepted", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+
+    result = cursor.execute(
+        """insert into reservation values(4, STR_TO_DATE("10-17-2021","%m-%d-%Y"), STR_TO_DATE("14-27-2021","%m-%d-%Y"), "not_accepted", 120, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+
+    result = cursor.execute(
+        """insert into reservation values(5, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 450, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+
+    result = cursor.execute(
+        """insert into reservation values(6, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 56, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     # chauffeur
     result = cursor.execute("""insert into chauffeur values(107, "car", 20);""")
