@@ -1,0 +1,106 @@
+{% extends 'chauffeurBase.html' %}
+{% block content %}
+{% if request.session.user_type == 'chauffeur' %}
+<div class="container">
+    <div class="row mt-5">
+       <h1> Chauffeur Requests</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Reservation Number</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Employee Status</th>
+                    <th scope="col">Reserver</th>
+                    <th scope="col">Checked By</th>
+                    <th scope="col">License Place</th>
+                    <th scope="col">Approve</th>
+                    <th scope="col">Deny</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for request in chauffeur_requests %}
+            {% if request.3 != "canceled" %}
+            <tr>
+                <td>{{request.0}}</td>
+                <td>{{request.1}}</td>
+                <td>{{request.2}}</td>
+                <td>{{request.3}}</td>
+                <td>{{request.4}}</td>
+                <td>{{request.5}}</td>
+                <td>{{request.6}}</td>
+                {% if request.7 == None and request.3 == "accepted" %}
+                <td><button type="button" value='{{ request.0 }}' class="btn btn-outline-success" >Accept</button></td>
+                <td><button type="button" value='{{ request.0 }}' class="btn btn-outline-danger" >Reject</button></td>
+                {% else %}
+                <td><button type="button" value='{{ request.0 }}' class="btn btn-outline-success" disabled>Accept</button></td>
+                <td><button type="button" value='{{ request.0 }}' class="btn btn-outline-danger" disabled>Reject</button></td>
+                {% endif %}
+                {% if request.7 == 1%}
+                <td>Accepted</td>
+                {% endif %}
+                {% if request.7 == 0%}
+                <td>Rejected</td>
+                {% endif %}
+                {% if request.7 == None and request.3 == "not_accepted"%}
+                <td>Waiting for employee approval</td>
+                {% endif %}
+                {% if request.7 == None and request.3 == "accepted"%}
+                <td>Waiting for your approval</td>
+                {% endif %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+    console.log('script exectued');
+
+    $(".btn-outline-success").on("click", function () {
+      var reservationtId = $(this).val();
+      var logged_in = $('#session').val();
+
+      $.ajax({
+        url: '/chauffeur/ajaxAcceptRequest',
+        data: {
+          'reservation_id': reservationtId,
+          'chauffeur_id': logged_in,
+        },
+        dataType: 'json',
+        success: function () {
+              alert('you accepted the request');
+              location.reload();
+        }
+      });
+
+    });
+  </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+    $(".btn-outline-danger").on("click", function () {
+      var reservationtId = $(this).val();
+      var logged_in = $('#session').val();
+
+      $.ajax({
+        url: '/chauffeur/ajaxDeclineRequest',
+        data: {
+          'reservation_id': reservationtId,
+          'chauffeur_id': logged_in,
+        },
+        dataType: 'json',
+        success: function () {
+              alert('you declined the request');
+              location.reload();
+        }
+      });
+
+    });
+    </script>
+
+{% endblock %}
+

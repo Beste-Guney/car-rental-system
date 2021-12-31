@@ -204,6 +204,7 @@ class LoginView(View):
                         desc = cursor.fetchall()
                         if len(desc) == 0:
                             request.session['user_type'] = 'chauffeur'
+                            return redirect('chauffeur:chauffeur_dashboard')
                         else:
                             request.session['user_type'] = 'damage_expert'
                     else:

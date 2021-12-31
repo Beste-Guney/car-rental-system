@@ -1,6 +1,5 @@
 from django.urls import path
-from customer.views import CustomerDashboard, MakeReservation, RateCar, CreateRequest, RateBranch, ReturnVehicle, \
-    PayVehicle, ListReservations, ReservationComplate, Error
+from customer.views import CustomerDashboard, MakeReservation, RateCar, CreateRequest, RateBranch, ReturnVehicle, PayVehicle, ListReservations, ReservationComplate, Error
 
 from django.contrib.auth.views import LogoutView
 

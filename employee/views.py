@@ -93,6 +93,7 @@ def accept_reservation(request):
     #changing the status of reservation
     cursor = connection.cursor()
     cursor.execute('update reservation set status = \'accepted\'  where reservation_number = \'' + str(reservation_id) + '\';')
+    cursor.execute('update reservation set checked_by = ' + employee_id +'  where reservation_number = \'' + str(reservation_id) + '\';')
     data = {}
     return JsonResponse(data)
 
@@ -105,6 +106,7 @@ def decline_reservation(request):
     cursor = connection.cursor()
     cursor.execute(
         'update reservation set status = \'canceled\'  where reservation_number = \'' + str(reservation_id) + '\';')
+    cursor.execute('update reservation set checked_by = ' + employee_id +'  where reservation_number = \'' + str(reservation_id) + '\';')
     data = {}
     return JsonResponse(data)
 
