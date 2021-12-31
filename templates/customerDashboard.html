@@ -10,16 +10,16 @@
             <tr>
                 {% endif %}
                 <td>
-                    <p class="mt-2 m-1"><b>Plate: </b> {{vehicle.0}}</p>
-                    <p class="m-1"><b>Status: </b> {{vehicle.1}}</p>
-                    <p class="m-1"><b>Daily Price: </b> {{vehicle.2}}</p>
-                    <p class="m-1"><b>Age: </b>{{vehicle.5}}</p>
-                    <p class="m-1"><b>Kilometers: </b>{{vehicle.6}} km</p>
-                    <p class="m-1"><b>Model: </b>{{vehicle.3}}</p>
+                    <p class="mt-2 m-1"><b>Plate: </b> {{vehicle.1}}</p>
+                    <p class="m-1"><b>Status: </b> {{vehicle.2}}</p>
+                    <p class="m-1"><b>Daily Price: </b> {{vehicle.3}}</p>
+                    <p class="m-1"><b>Age: </b>{{vehicle.}}</p>
+                    <p class="m-1"><b>Kilometers: </b>{{vehicle.7}} km</p>
+                    <p class="m-1"><b>Model: </b>{{vehicle.4}}</p>
                     <p class="m-1"><b>Branch: </b>{{vehicle.12}}</p>
                     <form action="{% url 'customer:customer_dashboard' %}" method='post'>
                         {% csrf_token %}
-                        <input type='hidden' name="plate" value="{{ vehicle.0 }}"/>
+                        <input type='hidden' name="plate" value="{{ vehicle.1 }}"/>
                         <button type="submit" class="btn btn-success">Rent</button>
                     </form>
                 </td>

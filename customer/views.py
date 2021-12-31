@@ -266,6 +266,8 @@ class MakeReservation(View):
             end_date = form.cleaned_data['end_date']
             chauffeur_id = form.cleaned_data['chauffeur_id']
             insurance_type = form.cleaned_data['insurance_type']
+            if start_date >= end_date: 
+                return redirect('/customer/errorDate')
 
             rental_period_in_days = abs((end_date - start_date).days);
             cost = rental_period_in_days * daily_cost
@@ -338,6 +340,9 @@ class Error(View):
     def get(self, request):
         return render(request, 'error.html')
 
+class DateError(View):
+    def get(self, request):
+        return render(request, 'errorDate.html')
 
 class ReservationComplate(View):
     def get(self, request):
