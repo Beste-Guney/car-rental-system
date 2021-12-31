@@ -324,7 +324,7 @@ class CustomerDashboard(View):
     def get(self, request) -> 'html':
         cursor = connection.cursor()
         cursor.execute(
-            'SELECT * FROM vehicle WHERE status = \'available\';'
+            'SELECT * FROM vehicle NATURAL JOIN branch WHERE status = \'available\';'
         )
         desc = cursor.fetchall()
         context = {
