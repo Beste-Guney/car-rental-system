@@ -191,3 +191,44 @@ def models_and_brands():
 
     return models, brands
 
+
+class FilterReservations(View):
+    def post(self, request):
+        branch_id, employee_name, branch_name = getInfo(self, request)
+        customer_name = request.POST['customer_name']
+        status = request.POST['reservation-status']
+        customer_name = customer_name.lower()
+        cursor = connection.cursor()
+
+        # getting reservations
+        if customer_name:
+            cursor.execute(
+                'create view filter1 as (select reservation.reservation_number, reservation.start_date, reservation.end_date, reservation.license_plate, '
+                'reservation.status as status, reservation.cost, customer.customer_name, reservation.insurance_type, reservation.reserved_chauf_id from reservation,vehicle, user, customer where reservation.license_plate = vehicle.license_plate and '
+                'reservation.reserver= user.user_id and user.user_id = customer.user_id and vehicle.branch_id= ' + str(
+                    branch_id) + ' and customer.customer_name like \'' + customer_name + '%\');'
+            )
+        else:
+            cursor.execute(
+                'create view filter1 as (select reservation.reservation_number, reservation.start_date, reservation.end_date, reservation.license_plate, '
+                'reservation.status as status, reservation.cost, customer.customer_name, reservation.insurance_type, reservation.reserved_chauf_id from reservation,vehicle, user, customer where reservation.license_plate = vehicle.license_plate and '
+                'reservation.reserver= user.user_id and user.user_id = customer.user_id and vehicle.branch_id= ' + str(
+                    branch_id) + ' );'
+            )
+
+        if status != 'empty':
+            cursor.execute('create view filter2 as select * from filter1 where status = \'' + str(status) + '\';')
+        else:
+            cursor.execute('create view filter2 as select * from filter1')
+
+        cursor.execute('select * from filter2 ')
+        result = cursor.fetchall()
+        cursor.execute('drop view filter1')
+        cursor.execute('drop view filter2')
+
+        context = {
+            'branch_name': branch_name,
+            'reservations': result,
+            'branch_id': branch_id
+        }
+        return render(request, 'employeeReservation.html', context)

@@ -8,15 +8,20 @@
                     <input type="hidden" id='session' value="{{ request.session.logged_in_user }}">
                     <h1>Reservations at {{ branch_name }}</h1>
                 </div>
-                 <form class="form-inline" role="form" >
+                 <form class="form-inline" role="form" method="post" action="{% url 'employee:filter_customer_reservations' %}">
                         {% csrf_token %}
                     <select name='reservation-status' class="custom-select my-1 mr-sm-2" id="status">
-                        <option value="Not paid">Not paid</option>
-                        <option value="Paid">Paid</option>
-                        <option value="Accepted">Accepted</option>
-                        <option value="NotAccepted">Not Accepted</option>
-                        <option value="OnRent">Currently On Rent</option>
+                        <option value="empty">Choose a status</option>
+                        <option value="not_paid">Not paid</option>
+                        <option value="paid">Paid</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="not_accepted">Not Accepted</option>
+                        <option value="on_rent">Currently On Rent</option>
                     </select>
+                     <br>
+                     <label for="customer_name">Customer Name</label>
+                     <input type="text" name="customer_name" id="customer_name">
+                     <button type="submit" > Filter</button>
                     </form>
             </div>
            <div class="container-fluid">
