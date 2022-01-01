@@ -43,6 +43,10 @@ try:
     result = cursor.execute("DROP TABLE IF EXISTS employee")
     result = cursor.execute("DROP TABLE IF EXISTS branch")
     result = cursor.execute("DROP TABLE IF EXISTS user")
+    result = cursor.execute("DROP TRIGGER IF EXISTS assert_availability_car")
+    result = cursor.execute("DROP TRIGGER IF EXISTS assert_reservation_control")
+
+
 
     # create tables
     result = cursor.execute("""create table user(
@@ -537,6 +541,29 @@ try:
     end;
     """)
 
+    # whenever a customer makes a reservation check whether car is available
+    result = cursor.execute("""
+    create trigger assert_availability_car before insert on reservation
+    for each row 
+    begin 
+    if exists(select * from reservation where  NEW.start_date >= start_date and NEW.end_date <= end_date and NEW.license_plate = reservation.license_plate) then
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'BIG Errorrrr';
+    end if;
+    end;
+    """)
+
+    #whenevere a customer makes a request check whether there is another reservation at that time
+    result = cursor.execute("""
+           create trigger assert_reservation_control before insert on reservation
+           for each row 
+           begin 
+           if exists(select * from reservation where  NEW.start_date >= start_date and NEW.end_date <= end_date and NEW.reserver = reservation.reserver) then
+           SIGNAL SQLSTATE '45000'
+               SET MESSAGE_TEXT = 'BIG Errorrrr';
+           end if;
+           end;
+           """)
 
     #stored procedures
     result = cursor.execute("""create procedure insert_user( in emailValue varchar(50), in passwordValue varchar(50), in addressValue varchar(50), in phone varchar(15))

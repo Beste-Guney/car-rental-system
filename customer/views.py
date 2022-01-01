@@ -286,8 +286,7 @@ class MakeReservation(View):
 
 
             # assertion 1- if the car to be reserved is not available
-            #assertion_1_sql = "create assertion vehicle_availability_constraint check (unique (select * from reservation R where R.license_plate = " + str(license_plate) + " and DATEPART(year, end_date) = " + str(actual_end.year) + " and  DATEPART(month, start_date) between " + str(actual_start.month) + " and " + str(actual_end.month) + " and DATEPART(day, start_date) between " + str(actual_start.day) +  " and " +  str(actual_end.day) + " DATEPART(day, end_date)"
-            # cursor.execute('select start_date, end_date from reservation where license_plate  = ' + str(license_plate) + ';')
+
             # result = cursor.fetchall()
             # for res in result:
             #     start = res[0]
@@ -335,7 +334,11 @@ class MakeReservation(View):
                    chauffeur_id)
 
             print(sql)
-            cursor.execute(sql)
+            try:
+                cursor.execute(sql)
+            except Exception as ex:
+                error_message = 'It is not available to make reservation'
+                return render(request, 'error.html', {'message': error_message})
 
             return redirect('/customer/reservationsuccess')
 

@@ -223,16 +223,22 @@ class FilterReservations(View):
             cursor.execute('create view filter2 as select * from filter1')
 
         if start_date:
-            cursor.execute('create view filter3 as select * from filter2 where ' + start_date + ' >= \'start_date\' and ' + start_date + ' <= \'end_date\';')
+            cursor.execute('create view filter3 as (select * from filter2 where start_date <= \'' + start_date + '\' and end_date >= \'' + start_date + '\');')
         else:
-            cursor.execute('create view filter3 as select * from filter2')
+            cursor.execute('create view filter3 as (select * from filter2);')
 
-        cursor.execute('select * from filter3 ')
+        if end_date:
+            cursor.execute('create view filter4 as (select * from filter3 where end_date <= \'' + end_date + '\' and start_date <= \'' + end_date + '\');')
+        else:
+            cursor.execute('create view filter4 as (select * from filter3);')
+
+        cursor.execute('select * from filter4 ')
         result = cursor.fetchall()
 
         cursor.execute('drop view filter1')
         cursor.execute('drop view filter2')
         cursor.execute('drop view filter3')
+        cursor.execute('drop view filter4')
 
         context = {
             'branch_name': branch_name,
