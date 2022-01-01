@@ -496,6 +496,8 @@ try:
     result = cursor.execute(
         """insert into reservation values(7, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
 
+    result = cursor.execute(
+        """insert into reservation values(8, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
 
     # vehicle_rate
     result = cursor.execute("""insert into vehicle_rate values(100, "06AY6527", "Very good car!", 5);""")
@@ -507,6 +509,21 @@ try:
 
     # assign_check
     result = cursor.execute("""insert into assign_check values(105, 104, "34GL3100");""")
+
+
+    #triggers
+    result = cursor.execute("""
+    create trigger update_vehicle_status 
+    after update on request 
+    for each row
+    begin 
+    if NEW.isApproved = 1 then
+    update vehicle set status = "on_transfer"
+    where vehicle.license_plate = NEW.requested_vehicle; end if;
+    end;""")
+
+
+    #whenever a request is accepted the car is in transfer
 
     connection.commit()
 

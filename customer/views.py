@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
 from pymysql import IntegrityError
-
+import datetime
 from .forms import CarPlate, MakeReservationForm, VehicleRate, CreateRequestForm, BranchRate, ReservationNo, Pay
 from datetime import date
 
@@ -256,6 +256,8 @@ class MakeReservation(View):
     def post(self, request):
 
         user_id = request.session['logged_in_user']
+        error_message = ''
+
         form = MakeReservationForm(request.POST, user=user_id, license_plate=None, daily_cost=None)
         if form.is_valid():
             reserver_id = form.cleaned_data['reserver_id']
@@ -280,6 +282,50 @@ class MakeReservation(View):
                 insurances = cursor.fetchall()
                 insurance_type = insurances[0][0]
 
+            # some assertions are needed before inserting a new reservation
+
+
+            # assertion 1- if the car to be reserved is not available
+            #assertion_1_sql = "create assertion vehicle_availability_constraint check (unique (select * from reservation R where R.license_plate = " + str(license_plate) + " and DATEPART(year, end_date) = " + str(actual_end.year) + " and  DATEPART(month, start_date) between " + str(actual_start.month) + " and " + str(actual_end.month) + " and DATEPART(day, start_date) between " + str(actual_start.day) +  " and " +  str(actual_end.day) + " DATEPART(day, end_date)"
+            # cursor.execute('select start_date, end_date from reservation where license_plate  = ' + str(license_plate) + ';')
+            # result = cursor.fetchall()
+            # for res in result:
+            #     start = res[0]
+            #     end = res[1]
+            #
+            #     if not (start_date)
+
+
+            #assertion 2- if you already have an reservation that day
+            #cursor.execute('select * from reservation  where reserver = ' + str(user_id) + ' and DATEPART(year, end_date) = ' + str(actual_end.year) + ' and DATEPART(year, end_date)')
+
+            #cursor.execute()
+
+
+
+            #assertion 3- if the user has not paid for a reservation before
+            assertion_3_sql = " select * from reservation where reserver = " + str(user_id) + " and status = \'not_paid\'"
+            cursor.execute(assertion_3_sql)
+            result = cursor.fetchall()
+            if len(result) != 0:
+                print('hfjdfhdjfj')
+                error_message = 'First pay your previous reservations'
+                return render(request, 'error.html', {'message': error_message})
+
+            #assertion 4- if user driving license info doesnt allow it to rent this car
+            assertion_4_sql = "select car_type from vehicle natural join car where license_plate = \'" + str(license_plate) + '\';'
+            cursor.execute(assertion_4_sql)
+            result_car_type = cursor.fetchall()
+            result_car_type = result_car_type[0]
+
+            cursor.execute('select license_type from driving_license where user_id = \'' + str(user_id) + '\';')
+            result_user_license = cursor.fetchall()
+            result_user_license = result_user_license[0]
+            if result_user_license[0][0:1] != result_car_type[0] and chauffeur_id == 'NULL':
+                error_message = 'You cannot drive this car, you need a chaeffuer'
+                return render(request, 'error.html', {'message': error_message})
+
+
             sql = """
             INSERT INTO `reservation` 
             (`start_date`, `end_date`, `status`, `cost`, `reserver`, 
@@ -293,7 +339,7 @@ class MakeReservation(View):
 
             return redirect('/customer/reservationsuccess')
 
-        return redirect('/customer/error')
+        return render(request, 'error.html', {'message': error_message})
 
     def get(self, request, plate) -> 'html':
         cursor = connection.cursor()
