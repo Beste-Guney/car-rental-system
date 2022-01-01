@@ -30,6 +30,33 @@
             {% endfor %}
             </tr>
         </table>
+        <div class="row" style="margin: 30px">
+            <div class="col-lg">
+                <table class="table">
+              <thead>
+               Your information about related branches
+                <tr>
+                  <th scope="col">Branch Name</th>
+                    <th scope="col">Number of Reservations</th>
+                  <th scope="col">Your Rating for Branch</th>
+                    <th scope="col"> Your average expense on branch</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for value in info %}
+                  <tr>
+                  <th scope="row">{{ value.0 }}</th>
+                  <td>{{ value.1 }}</td>
+                  <td>{{ value.2 }}</td>
+                  <td>{{ value.3 }}</td>
+                </tr>
+              {% endfor %}
+
+              </tbody>
+            </table>
+
+            </div>
+          </div></div>
     </div>
 </div>
 {% endif %}

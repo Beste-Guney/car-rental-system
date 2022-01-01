@@ -761,7 +761,22 @@ class StatisticsView(View):
             elif res[1] == 'canceled':
                 number_of_denials[res[2]] = [res[0], res[1]]
 
+        print(branch_id)
+        # for the third statistic in the page manager can see the income for each month
+        cursor.execute('create view sum_reserved_employee as (select employee_name, sum(cost) as sum_cost, month(start_date) as month from reservation, employee, vehicle where reservation.license_plate = vehicle.license_plate and reservation.checked_by = employee.user_id group by reservation.checked_by, month(start_date));')
+        cursor.execute(
+            'select month(R.start_date) as month, '
+            '(select S.employee_name from sum_reserved_employee S '
+            'where S.month = month(R.start_date) and '
+            'S.sum_cost=(select max(sum_cost) from sum_reserved_employee T where T.month = '
+            'S.month)) as employee, sum(R.cost) as total_income from reservation R ,vehicle V where R.license_plate = V.license_plate '
+            'and R.status = \'paid\' and V.branch_id = ' + str(branch_id) + ' group by month(start_date)'
+        )
+        result = cursor.fetchall()
+        for res in result:
+            print(res)
 
+        cursor.execute('drop view sum_reserved_employee')
         context = {
             'branch_id': branch_id, 'branch_name': branch_name, 'employee_name': employee_name,
             'expensive_rents': most_expensive_rent_of_month,
@@ -769,7 +784,8 @@ class StatisticsView(View):
             'deny': number_of_denials,
             'budget': budget,
             'sum_salary': sum_salary,
-            'total_car': total_cars
+            'total_car': total_cars,
+            'month_info': result
         }
 
         return render(request, 'managerDashboard.html', context)

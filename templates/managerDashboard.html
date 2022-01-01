@@ -3,6 +3,7 @@
 {% block content %}
 
     {% if request.session.user_type == 'manager' %}
+
         <div class="container">
             <div class="row">
                 <div class="col-lg">
@@ -13,6 +14,32 @@
                     <h4>Number of Cars You have in this branch: {{ total_car }} </h4>
                 </div>
             </div>
+               <div class="container">
+         <div class="row">
+            <div class="col-lg">
+                <table class="table">
+              <thead>
+               The total income and most harworking employee for month
+                <tr>
+                  <th scope="col">Month</th>
+                    <th scope="col">Employee Name</th>
+                  <th scope="col">Total Income</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for item in month_info %}
+                  <tr>
+                  <th scope="row">{{ item.0 }}</th>
+                  <td>{{ item.1 }}</td>
+                  <td>{{ item.2 }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+
+            </div>
+          </div></div>
+
           <div class="row">
             <div class="col-lg">
                 <table class="table">
@@ -38,6 +65,7 @@
 
             </div>
           </div></div>
+
         </div>
         <div class="container">
          <div class="row">

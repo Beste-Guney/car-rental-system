@@ -503,6 +503,15 @@ try:
     result = cursor.execute(
         """insert into reservation values(8, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
 
+    result = cursor.execute(
+        """insert into reservation values(9, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+
+    result = cursor.execute(
+        """insert into reservation values(10, STR_TO_DATE("11-19-2021","%m-%d-%Y"), STR_TO_DATE("12-26-2021","%m-%d-%Y"), "paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+
+    result = cursor.execute(
+        """insert into reservation values(11, STR_TO_DATE("11-19-2021","%m-%d-%Y"), STR_TO_DATE("12-26-2021","%m-%d-%Y"), "paid", 190, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+
     # vehicle_rate
     result = cursor.execute("""insert into vehicle_rate values(100, "06AY6527", "Very good car!", 5);""")
     result = cursor.execute("""insert into vehicle_rate values(102, "34GL3100", "Trash car!", 1);""")

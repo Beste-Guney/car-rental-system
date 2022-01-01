@@ -10,7 +10,6 @@ from datetime import date
 
 
 class PayVehicle(View):
-
     def post(self, request, resno):
         form = Pay(request.POST)
 
@@ -362,13 +361,22 @@ class CustomerDashboard(View):
         return render(request, 'customerDashboard.html')
 
     def get(self, request) -> 'html':
+        user_id = request.session['logged_in_user']
         cursor = connection.cursor()
         cursor.execute(
             'SELECT * FROM vehicle NATURAL JOIN branch WHERE status = \'available\';'
         )
         desc = cursor.fetchall()
+
+        # some statistics for the customer
+        cursor.execute('SELECT (select branch_name from branch where branch_id = V.branch_id) as name, count(*) as number_of_reservations, (select score from branch_rate where branch_id = V.branch_id and customer_id = R.reserver) as your_score, avg(cost) as cost FROM reservation R, vehicle V where R.license_plate = V.license_plate and R.reserver = ' + str(user_id) + ' and R.status <> \'canceled\' group by V.branch_id;')
+        result = cursor.fetchall()
+        for res in result:
+            print(res)
+
         context = {
             'vehicles': desc,
+            'info': result,
         }
         return render(request, 'customerDashboard.html', context)
 
