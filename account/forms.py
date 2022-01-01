@@ -18,8 +18,8 @@ class UserLoginForm(forms.Form):
 class CustomerCreationForm(forms.Form):
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
-    password1 = forms.CharField(label='Enter password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Enter password', widget=forms.PasswordInput, min_length=6)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput, min_length=6)
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)
     state = forms.CharField(label='nationality', max_length=20)
@@ -35,7 +35,7 @@ class CustomerCreationForm(forms.Form):
 class BranchEmployeeCreationForm(forms.Form):
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
-    password = forms.CharField(label='Enter password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Enter password', widget=forms.PasswordInput, min_length=6)
     salary = forms.FloatField(label='Salary')
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)
@@ -52,7 +52,7 @@ class ChauffeurCreationForm(forms.Form):
 
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
-    password = forms.CharField(label='Enter password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Enter password', widget=forms.PasswordInput, min_length=6)
     salary = forms.FloatField(label='Salary')
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)
@@ -71,7 +71,7 @@ class DamageExpertCreationForm(forms.Form):
 
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
-    password = forms.CharField(label='Enter password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Enter password', widget=forms.PasswordInput, min_length=6)
     salary = forms.FloatField(label='Salary')
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)

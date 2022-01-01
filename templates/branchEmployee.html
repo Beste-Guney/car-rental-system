@@ -20,6 +20,8 @@
                     <p class="mt-2 m-1 "><b>Name: </b>{{ empl.2 }}</p>
                     <p class="m-1"><b>Job: </b> {{ empl.3}}</p>
                     <p class="m-1"><b>Salary: </b>{{ empl.1 }}</p>
+                     <button type="button" value='{{ empl.0 }}' class="btn btn-outline-danger">Fire employee</button>
+                                    <input type="hidden" id='session' value="{{ request.session.logged_in_user }}">
                 </div>
                     {% else %}
                                     <div class="col-sm">
@@ -28,9 +30,38 @@
                     <p class="mt-2 m-1 "><b>Name: </b>{{ empl.2 }}</p>
                     <p class="m-1"><b>Job: </b> {{ empl.3}}</p>
                     <p class="m-1"><b>Salary: </b>{{ empl.1 }}</p>
+                                     <button type="button" value='{{ empl.0 }}' class="btn btn-outline-danger">Fire employee</button>
+                                    <input type="hidden" id='session' value="{{ request.session.logged_in_user }}">
                 </div>
                 {% endif %}
 
             {% endfor %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
+    <script>
+
+    $(".btn").on("click", function () {
+      var employee = $(this).val();
+      var logged_in = $('#session').val();
+
+      $.ajax({
+        url: '/management/ajax/fireEmployee',
+        data: {
+          'employee': employee,
+            'manager': logged_in,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if(data['fired']){
+              alert('succesfully fired your employee');
+              location.reload();
+          }
+          else{
+              alert('could not fire your employee');
+          }
+        }
+      });
+
+    });
+  </script>
 {% endblock %}

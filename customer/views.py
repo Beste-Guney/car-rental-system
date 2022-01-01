@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
@@ -284,23 +285,11 @@ class MakeReservation(View):
 
             # some assertions are needed before inserting a new reservation
 
-
             # assertion 1- if the car to be reserved is not available
 
-            # result = cursor.fetchall()
-            # for res in result:
-            #     start = res[0]
-            #     end = res[1]
-            #
-            #     if not (start_date)
-
-
             #assertion 2- if you already have an reservation that day
-            #cursor.execute('select * from reservation  where reserver = ' + str(user_id) + ' and DATEPART(year, end_date) = ' + str(actual_end.year) + ' and DATEPART(year, end_date)')
 
-            #cursor.execute()
-
-
+            #these two assertions are provided at triggers
 
             #assertion 3- if the user has not paid for a reservation before
             assertion_3_sql = " select * from reservation where reserver = " + str(user_id) + " and status = \'not_paid\'"
@@ -435,3 +424,14 @@ class OrderReservations(View):
             'reservations': result
         }
         return render(request, 'listReservations.html', context)
+
+def cancelReservation( request):
+    reservation = request.GET.get('reservation', None)
+    customer = request.GET.get('customer', None)
+
+    cursor = connection.cursor()
+    cursor.execute('update reservation set status = \'canceled \'where reservation_number = ' + str(reservation) + ';')
+
+    data = {}
+    data['canceled'] = True
+    return JsonResponse(data)

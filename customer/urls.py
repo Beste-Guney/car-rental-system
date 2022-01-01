@@ -1,5 +1,5 @@
 from django.urls import path
-from customer.views import OrderReservations, CustomerDashboard, MakeReservation, RateCar, CreateRequest, RateBranch, ReturnVehicle, PayVehicle, ListReservations, ReservationComplate, Error, DateError
+from customer.views import cancelReservation, OrderReservations, CustomerDashboard, MakeReservation, RateCar, CreateRequest, RateBranch, ReturnVehicle, PayVehicle, ListReservations, ReservationComplate, Error, DateError
 
 from django.contrib.auth.views import LogoutView
 
@@ -20,5 +20,6 @@ urlpatterns = [
     path('allReservations/', ListReservations.as_view(), name='reservation_list'),
     path('makereservation/<str:plate>', MakeReservation.as_view(), name='customer_make_res'),
     path('orderReservations/', OrderReservations.as_view(), name='order_reservations'),
+    path('ajax/cancelReservation/', cancelReservation, name='ajax_cancel_reservation'),
     path("logout/", LogoutView.as_view(), name="logout")
 ]

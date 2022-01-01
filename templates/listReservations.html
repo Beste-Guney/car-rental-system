@@ -25,11 +25,7 @@
                     <p class="mt-2 m-1 "><b>Start Date: </b>{{ reserve.1 }}</p>
                     <p class="m-1"><b>End Date: </b> {{ reserve.2}}</p>
                     <p class="m-1"><b>Status: </b>
-                        {% if reserve.3 == "not_accepted" %}
-                            Not Accepted
-                            {% else %}
-                            Accepted
-                            {% endif %}</p>
+                        {{ reserve.3 }}</p>
                     <p class="m-1"><b>Cost: </b>${{ reserve.4 }}</p>
                     <p class="m-1"><b>Chauffeur: </b>
                         {% if reserve.11  %}
@@ -44,11 +40,7 @@
                     <p class="mt-2 m-1 "><b>Start Date: </b>{{ reserve.1 }}</p>
                     <p class="m-1"><b>End Date: </b> {{ reserve.2}}</p>
                     <p class="m-1"><b>Status: </b>
-                        {% if reserve.3 == "not_accepted" %}
-                            Not Accepted
-                            {% else %}
-                            Accepted
-                            {% endif %}</p>
+                        {{ reserve.3 }}</p>
                     <p class="m-1"><b>Cost: </b>${{ reserve.4 }}</p>
                     <p class="m-1"><b>Chauffeur: </b>
                         {% if reserve.11  %}
@@ -56,10 +48,40 @@
                             {% else %}
                             There is no chauffeur for this reservation</p>
                             {% endif %}
+                   <button type="button" value='{{ reserve.0 }}' class="btn btn-success">Cancel reservation</button>
+                                    <input type="hidden" id='session' value="{{ request.session.logged_in_user }}">
                 </div>
                 {% endif %}
 
             {% endfor %}
         </div></div>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script>
+
+    $(".btn").on("click", function () {
+      var reservation = $(this).val();
+      var logged_in = $('#session').val();
+
+      $.ajax({
+        url: '/customer/ajax/cancelReservation',
+        data: {
+          'reservation': reservation,
+            'customer': logged_in,
+        },
+        dataType: 'json',
+        success: function (data) {
+          if(data['canceled']){
+              alert('succesfully canceled your reservation');
+              location.reload();
+          }
+          else{
+              alert('cannot canceled your reservation');
+          }
+        }
+      });
+
+    });
+  </script>
 
 {% endblock %}

@@ -4,7 +4,7 @@ from django import forms
 class BranchEmployeeCreationForm(forms.Form):
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
-    password = forms.CharField(label='Enter password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Enter password', widget=forms.PasswordInput,min_length=6)
     salary = forms.FloatField(label='Salary')
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)
@@ -20,7 +20,7 @@ class ChauffeurCreationForm(forms.Form):
 
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
-    password = forms.CharField(label='Enter password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Enter password', widget=forms.PasswordInput, min_length=6)
     salary = forms.FloatField(label='Salary')
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)
@@ -38,7 +38,7 @@ class DamageExpertCreationForm(forms.Form):
 
     username = forms.CharField(label='Enter Username', min_length=4, max_length=150)
     email = forms.EmailField(label='Enter email')
-    password = forms.CharField(label='Enter password', widget=forms.PasswordInput)
+    password = forms.CharField(label='Enter password', widget=forms.PasswordInput, min_length=6)
     salary = forms.FloatField(label='Salary')
     phone_number = forms.CharField(label='phone_number', max_length=100)
     address = forms.CharField(label='adress', max_length=100)

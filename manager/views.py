@@ -775,4 +775,13 @@ class StatisticsView(View):
         return render(request, 'managerDashboard.html', context)
 
 
+def ajaxFireEmployee(request):
+    employee = request.GET.get('employee', None)
+    manager = request.GET.get('manager', None)
 
+    cursor = connection.cursor()
+    cursor.execute('delete from user where user_id = ' + str(employee) + ';');
+
+    data = {}
+    data['fired'] = True
+    return JsonResponse(data)
