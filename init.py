@@ -423,7 +423,7 @@ try:
     result = cursor.execute("""insert into employee values(106, 6100,"Ayse Fatma",1);""")
     result = cursor.execute("""insert into employee values(104, 15000,"Kaan Atesel",1);""")
     result = cursor.execute("""insert into employee values(107, 7000,"Hamza Erdogan",1);""")
-    result = cursor.execute("""insert into employee values(108, 10000,"Mehmet Aydın",1);""")
+    result = cursor.execute("""insert into employee values(108, 10000,"Mehmet Aydin",1);""")
     result = cursor.execute("""insert into employee values(109, 15000,"Melis Bayrak",1);""")
     result = cursor.execute("""insert into employee values(110, 11111,"Mazimye Celik",1);""")
 
@@ -476,10 +476,10 @@ try:
 
     # reservation
     result = cursor.execute(
-        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
-        """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "canceled", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
         """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("11-27-2021","%m-%d-%Y"), "not_accepted", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
@@ -512,6 +512,8 @@ try:
 
 
     #triggers
+    #whenever a request is accepted the car is in transfer
+
     result = cursor.execute("""
     create trigger update_vehicle_status 
     after update on request 
@@ -522,8 +524,25 @@ try:
     where vehicle.license_plate = NEW.requested_vehicle; end if;
     end;""")
 
+    # whenever a branch manager buys a car update branch budget
+    result = cursor.execute("""
+    create trigger update_branch_budget
+    after update on vehicle 
+    for each row 
+    begin
+    if OLD.status = "onsale" then
+    update branch set budget = budget - OLD.price
+    where branch.branch_id = NEW.branch_id;
+    end if;
+    end;
+    """)
 
-    #whenever a request is accepted the car is in transfer
+
+    #stored procedures
+    result = cursor.execute("""create procedure insert_user( in emailValue varchar(50), in passwordValue varchar(50), in addressValue varchar(50), in phone varchar(15))
+    begin 
+        insert into user(email, password, address, phone_number) values( emailValue, passwordValue, addressValue, phone);
+    end;""")
 
     connection.commit()
 

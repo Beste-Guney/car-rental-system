@@ -408,3 +408,27 @@ class ListReservations(View):
             'reservations': result
         }
         return render(request, 'listReservations.html', context)
+
+class OrderReservations(View):
+    def post(self, request):
+        order = request.POST['order-by']
+        reserver = request.session['logged_in_user']
+        cursor = connection.cursor()
+
+        if int(order) == 1:
+            cursor.execute(
+                'SELECT * FROM reservation WHERE reserver =' + str(reserver) + ' order by start_date;'
+            )
+        elif int(order) == 2:
+            cursor.execute(
+                'SELECT * FROM reservation WHERE reserver =' + str(reserver) + ' order by cost;'
+            )
+        else:
+            cursor.execute(
+                'SELECT * FROM reservation WHERE reserver =' + str(reserver) + ' order by end_date;'
+            )
+        result = cursor.fetchall()
+        context = {
+            'reservations': result
+        }
+        return render(request, 'listReservations.html', context)

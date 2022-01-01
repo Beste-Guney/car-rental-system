@@ -5,8 +5,9 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1>Your Reservations</h1>
-                    <form class="form-inline" role="form">
-                    <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                    <form class="form-inline" role="form" method="post" action="{% url 'customer:order_reservations' %}">
+                    {% csrf_token %}
+                        <select class="custom-select my-1 mr-sm-2" name='order-by' id="inlineFormCustomSelectPref">
                         <option selected>Order By</option>
                         <option value="1">Start Date</option>
                         <option value="2">Price</option>

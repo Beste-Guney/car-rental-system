@@ -13,5 +13,5 @@ urlpatterns = [
     path('employeeRequests/', RequestsView.as_view(), name='view-requests'),
     path("logout/", LogoutView.as_view(), name="logout"),
     path('branchCars/<int:branch_id>', BranchCarView.as_view(), name='cars_at_branch'),
-    path('filterReservations/', FilterReservations.as_view(), name='filter_customer_reservations')
+    path('filterReservations/', FilterReservations.as_view(), name='filter_customer_reservations'),
 ]

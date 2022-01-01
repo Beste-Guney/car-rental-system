@@ -48,8 +48,6 @@ class ReservationView(View):
             'reservation.reserver= user.user_id and user.user_id = customer.user_id and vehicle.branch_id= ' + str(branch_id) + ';'
         )
         result = cursor.fetchall()
-        for res in result:
-            print(res)
 
         #getting reserver info with join
 
@@ -197,20 +195,23 @@ class FilterReservations(View):
         branch_id, employee_name, branch_name = getInfo(self, request)
         customer_name = request.POST['customer_name']
         status = request.POST['reservation-status']
+        start_date = request.POST['start_date']
+        end_date = request.POST['end_date']
+
         customer_name = customer_name.lower()
         cursor = connection.cursor()
 
         # getting reservations
         if customer_name:
             cursor.execute(
-                'create view filter1 as (select reservation.reservation_number, reservation.start_date, reservation.end_date, reservation.license_plate, '
+                'create view filter1 as (select reservation.reservation_number, reservation.start_date as start_date, reservation.end_date as end_date, reservation.license_plate, '
                 'reservation.status as status, reservation.cost, customer.customer_name, reservation.insurance_type, reservation.reserved_chauf_id from reservation,vehicle, user, customer where reservation.license_plate = vehicle.license_plate and '
                 'reservation.reserver= user.user_id and user.user_id = customer.user_id and vehicle.branch_id= ' + str(
                     branch_id) + ' and customer.customer_name like \'' + customer_name + '%\');'
             )
         else:
             cursor.execute(
-                'create view filter1 as (select reservation.reservation_number, reservation.start_date, reservation.end_date, reservation.license_plate, '
+                'create view filter1 as (select reservation.reservation_number, reservation.start_date as start_date, reservation.end_date as end_date, reservation.license_plate, '
                 'reservation.status as status, reservation.cost, customer.customer_name, reservation.insurance_type, reservation.reserved_chauf_id from reservation,vehicle, user, customer where reservation.license_plate = vehicle.license_plate and '
                 'reservation.reserver= user.user_id and user.user_id = customer.user_id and vehicle.branch_id= ' + str(
                     branch_id) + ' );'
@@ -221,10 +222,17 @@ class FilterReservations(View):
         else:
             cursor.execute('create view filter2 as select * from filter1')
 
-        cursor.execute('select * from filter2 ')
+        if start_date:
+            cursor.execute('create view filter3 as select * from filter2 where ' + start_date + ' >= \'start_date\' and ' + start_date + ' <= \'end_date\';')
+        else:
+            cursor.execute('create view filter3 as select * from filter2')
+
+        cursor.execute('select * from filter3 ')
         result = cursor.fetchall()
+
         cursor.execute('drop view filter1')
         cursor.execute('drop view filter2')
+        cursor.execute('drop view filter3')
 
         context = {
             'branch_name': branch_name,
@@ -232,3 +240,5 @@ class FilterReservations(View):
             'branch_id': branch_id
         }
         return render(request, 'employeeReservation.html', context)
+
+
