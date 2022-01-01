@@ -35,7 +35,7 @@ class PayVehicle(View):
 
                 sql = "UPDATE reservation set status = 'paid' where reservation_number = {}".format(res_no)
                 cursor.execute(sql)
-                messages.success(request, 'Playment is taken. Thank you :)')
+                messages.success(request, 'Payment is taken. Thank you :)')
                 return self.get(request, res_no)
 
         return redirect('/customer/error')
@@ -98,7 +98,7 @@ class ReturnVehicle(View):
     def get(self, request) -> 'html':
         user_id = request.session['logged_in_user']
         cursor = connection.cursor()
-        sql = "SELECT reservation_number, license_plate, start_date,end_date,cost, status FROM `reservation` WHERE reserver = {} and status = 'on_rent';".format(
+        sql = "SELECT reservation_number, license_plate, start_date,end_date,cost, status FROM `reservation` WHERE reserver = {} and status = 'accepted';".format(
             user_id)
         cursor.execute(sql)
         active_res = cursor.fetchall()
@@ -266,7 +266,7 @@ class MakeReservation(View):
             end_date = form.cleaned_data['end_date']
             chauffeur_id = form.cleaned_data['chauffeur_id']
             insurance_type = form.cleaned_data['insurance_type']
-            if start_date >= end_date: 
+            if start_date > end_date: 
                 return redirect('/customer/errorDate')
 
             rental_period_in_days = abs((end_date - start_date).days);
