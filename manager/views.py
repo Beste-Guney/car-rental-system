@@ -534,7 +534,7 @@ class FilterView(View):
 
         #gathering filtered vehicles
         cursor.execute(
-                'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate;'
+                'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate and vehicle.branch_id = ' + str(branch_id) + ';'
         )
         result = cursor.fetchall()
         vehicle_info = []
@@ -664,7 +664,7 @@ class FilterForBuyingView(View):
 
         #gathering filtered vehicles
         cursor.execute(
-                'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate;'
+                'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate and vehicle.branch_id = ' + str(branch_id) + ';'
         )
         result = cursor.fetchall()
         vehicle_info = []

@@ -14,4 +14,5 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path('branchCars/<int:branch_id>', BranchCarView.as_view(), name='cars_at_branch'),
     path('filterReservations/', FilterReservations.as_view(), name='filter_customer_reservations'),
+    path('filterVehicle/', FilterVehicles.as_view(), name='filter_vehicle_branch')
 ]

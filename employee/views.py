@@ -241,4 +241,114 @@ class FilterReservations(View):
         }
         return render(request, 'employeeReservation.html', context)
 
+class FilterVehicles(View):
+    def post(self, request):
+        branch_id, employee_name, branch_name = getInfo(self, request)
+        cursor = connection.cursor()
 
+        # taking filtering conditions from post
+        license = request.POST['license']
+        age = request.POST['age-vehicle']
+        model = request.POST['model-vehicle']
+        kilometers = request.POST['kilometers']
+        brand = request.POST['brand']
+        low = request.POST['lowest']
+        high = request.POST['highest']
+
+        # if plate is entered find the car
+        if license:
+            cursor.execute(
+                'create view filter6 as select * from vehicle where license_plate like \'' + license + '%\';'
+            )
+        else:
+            cursor.execute(
+                'create view filter6 as select * from vehicle ;'
+            )
+        # filtering according to other conditions
+        if int(age) != -1:
+            print('here1')
+            upper_bound = int(age) + 5
+            cursor.execute(
+                'create view filter1 as select * from filter6 where age between\'' + str(age) + '\'and \'' + str(
+                    upper_bound) + '\';'
+            )
+
+        else:
+            cursor.execute(
+                'create view filter1 as '
+                'select * from filter6;'
+            )
+
+        if model != 'empty':
+            cursor.execute(
+                'create view filter2 as select * from filter1 where model=\'' + model + '\';'
+            )
+        else:
+            cursor.execute(
+                'create view filter2 as '
+                'select * from filter1;'
+            )
+
+        if int(kilometers) != -1:
+            print('here3')
+
+            if int(kilometers) == 40000:
+                cursor.execute(
+                    'create view filter3 as '
+                    'select * from filter2 where kilometers > 40000;'
+                )
+            else:
+                upper_bound = int(kilometers) * 2
+                cursor.execute(
+                    'create view filter3 as select * from filter2 where kilometers between ' + str(
+                        kilometers) + ' and ' + str(upper_bound) + ';'
+                )
+
+
+        else:
+            cursor.execute(
+                'create view filter3 as '
+                'select * from filter2;'
+            )
+
+        if int(high) == 0:
+            cursor.execute(
+                'create view filter4 as select * from filter3 where daily_rent_price > ' + str(low) + ';'
+            )
+        else:
+            cursor.execute(
+                'create view filter4 as select * from filter3 where daily_rent_price between ' + str(
+                    low) + ' and ' + str(high) + ';'
+            )
+
+        if brand != 'empty':
+            cursor.execute(
+                'create view filter5 as select * from filter4 where brand=\'' + brand + '\';'
+            )
+        else:
+            cursor.execute(
+                'create view filter5 as select * from filter4;'
+            )
+
+        # gathering filtered vehicles
+        cursor.execute(
+            'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate and vehicle.branch_id = ' + str(branch_id) + ';'
+        )
+        result = cursor.fetchall()
+        vehicle_info = []
+
+        for car in result:
+            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
+            vehicle_info.append(item_detail)
+
+        cursor.execute('drop view filter1')
+        cursor.execute('drop view filter2')
+        cursor.execute('drop view filter3')
+        cursor.execute('drop view filter4')
+        cursor.execute('drop view filter5')
+        cursor.execute('drop view filter6')
+        models, brands = models_and_brands()
+
+        return render(request, 'branchCarsEmployee.html',
+                      {'vehicles': vehicle_info, 'branch_name': branch_name, 'branch_id': branch_id, 'models': models,
+                       'brands': brands})
