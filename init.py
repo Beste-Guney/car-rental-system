@@ -3,9 +3,9 @@ from mysql.connector import Error
 
 try:
     connection = mysql.connector.connect(host='127.0.0.1',
-                                         database='rental2',
+                                         database='rental3',
                                          user='root',
-                                         password='123')
+                                         password='root')
 
     if connection.is_connected():
         db_Info = connection.get_server_info()
@@ -56,12 +56,14 @@ try:
     print("User table created successfully ")
 
     result = cursor.execute("""	create table driving_license(
-                user_id int not null auto_increment,
+                user_id int not null,
                 license_number int,
                 license_type char(3),
                 received_date date,
                 check (license_type in ("A1", "A2", "A", "M", "B1", "B", "BE", "C1", "C", "CE")),
-                FOREIGN KEY (user_id) REFERENCES user(user_id),
+                FOREIGN KEY (user_id) REFERENCES user(user_id)
+                on delete CASCADE
+                on update CASCADE,
                 PRIMARY KEY (license_number)) ENGINE=INNODB;""")
     print("Driving_License table created successfully ")
 
@@ -73,12 +75,16 @@ try:
     print("Branch table created successfully ")
 
     result = cursor.execute("""create table employee(
-                user_id int not null auto_increment,
+                user_id int not null,
                 salary numeric(8,2),
                 employee_name varchar(20),
                 branch_id int not null,
-                FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
-                FOREIGN KEY (user_id) REFERENCES user(user_id),
+                FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
+                on delete CASCADE
+                on update CASCADE,
+                FOREIGN KEY (user_id) REFERENCES user(user_id)
+                on delete CASCADE 
+                on update CASCADE,
                 PRIMARY KEY (user_id));""")
     print("Employee table created successfully")
 
@@ -91,21 +97,27 @@ try:
     print("Customer_Discount table created successfully")
 
     result = cursor.execute("""create table customer(
-                user_id int not null auto_increment,
+                user_id int not null,
                 date_of_birth date,
                 nationality varchar(20),
                 customer_status varchar(10),
                 customer_name varchar(20),
                 check (customer_status in ("Gold", "Silver", "Premium", "Normal")),
-                FOREIGN KEY (user_id) REFERENCES user(user_id),
-                FOREIGN KEY (customer_status) REFERENCES customer_discount(customer_status),
+                FOREIGN KEY (user_id) REFERENCES user(user_id)
+                on delete CASCADE 
+                on update CASCADE,
+                FOREIGN KEY (customer_status) REFERENCES customer_discount(customer_status)
+                on delete set null 
+                on update CASCADE ,
                 PRIMARY KEY (user_id));""")
     print("Customer table created successfully")
 
     result = cursor.execute("""create table manager(
-                user_id int not null auto_increment,
+                user_id int not null,
                 years_of_management int,
-                FOREIGN KEY (user_id) REFERENCES employee(user_id),
+                FOREIGN KEY (user_id) REFERENCES employee(user_id)
+                on delete CASCADE 
+                on update CASCADE,
                 PRIMARY KEY (user_id));""")
     print("Manager table created successfully")
 
@@ -130,16 +142,24 @@ try:
                 check (status in ("on_rent", "onsale", "available", "on_transfer", "unavailable", "reserved")),
                 check (transmission_type in ("Automatic", "Manual")),
                 PRIMARY KEY (license_plate),
-                FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id),
-                FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
-                FOREIGN KEY (model,brand) REFERENCES model_brand(model,brand));""")
+                FOREIGN KEY (buying_manager_id) REFERENCES manager(user_id)
+                on delete set null 
+                on update CASCADE,
+                FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
+                on delete set null 
+                on update CASCADE ,
+                FOREIGN KEY (model,brand) REFERENCES model_brand(model,brand)
+                on delete CASCADE 
+                on update CASCADE );""")
     print("Vehicle table created successfully")
 
     result = cursor.execute("""create table car(
                 license_plate varchar(8) not null,
                 car_type char(1),
                 check (car_type in ("A", "B", "C", "D")),
-                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate),
+                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
+                on delete CASCADE 
+                on update CASCADE ,
                 PRIMARY KEY (license_plate) );""")
     print("Car table created successfully")
 
@@ -148,7 +168,9 @@ try:
                 truck_type char(1),
                 weight_capacity int,
                 check (truck_type in ("A", "B", "C", "D")),
-                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate),
+                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
+                on delete CASCADE 
+                on update CASCADE,
                 PRIMARY KEY (license_plate));""")
     print("Truck table created successfully")
 
@@ -156,7 +178,9 @@ try:
                 license_plate varchar(8) not null,
                 motorcycle_type char(1),
                 check (motorcycle_type in ("A", "B", "C", "D")),
-                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate),
+                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
+                on delete CASCADE 
+                on update CASCADE ,
                 PRIMARY KEY (license_plate));""")
     print("Truck table created successfully")
 
@@ -170,22 +194,30 @@ try:
     result = cursor.execute("""create table inspect(
                 application_id int not null,
                 manager_id int,
-                FOREIGN KEY (application_id) REFERENCES job_application(application_id),
-                FOREIGN KEY (manager_id) REFERENCES manager(user_id),
+                FOREIGN KEY (application_id) REFERENCES job_application(application_id)
+                on delete CASCADE 
+                on update CASCADE ,
+                FOREIGN KEY (manager_id) REFERENCES manager(user_id)
+                on delete CASCADE 
+                on update CASCADE ,
                 PRIMARY KEY (manager_id, application_id));""")
     print("Job_Application table created successfully")
 
     result = cursor.execute("""create table branch_employee(
                 user_id int not null,
                 years_of_work int,
-                FOREIGN KEY (user_id) REFERENCES employee(user_id),
+                FOREIGN KEY (user_id) REFERENCES employee(user_id)
+                on delete CASCADE 
+                on update CASCADE ,
                 PRIMARY KEY (user_id));""")
     print("Job_Application table created successfully")
 
     result = cursor.execute("""create table damage_expertise(
                 user_id int not null,
                 interest_car_type varchar(20),
-                FOREIGN KEY (user_id) REFERENCES employee(user_id),
+                FOREIGN KEY (user_id) REFERENCES employee(user_id)
+                on delete cascade 
+                on update cascade,
                 PRIMARY KEY (user_id));""")
     print("Damage_Expersite table created successfully")
 
@@ -199,7 +231,9 @@ try:
                 user_id int not null,
                 drive_car_type varchar(20),
                 driving_years int,
-                FOREIGN KEY (user_id) REFERENCES employee(user_id),
+                FOREIGN KEY (user_id) REFERENCES employee(user_id)
+                on delete cascade 
+                on update cascade ,
                 PRIMARY KEY (user_id) );""")
     print("Chauffeur table created successfully")
 
@@ -219,11 +253,19 @@ try:
                 reserved_chauf_id int,
                 isChaufAccepted bool,
                 check (isApproved  in ("true", "false")),
-                check (status in ("on_rent", "accepted", "not_accepted", "canceled", "paid", "not_paid")),
-                FOREIGN KEY (reserver) REFERENCES customer(user_id),
-                FOREIGN KEY (checked_by) REFERENCES branch_employee(user_id),
-                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate),
-                FOREIGN KEY (reserved_chauf_id) REFERENCES chauffeur(user_id),
+                check (status in ("on_rent","accepted", "not_accepted", "canceled", "paid", "not_paid")),
+                FOREIGN KEY (reserver) REFERENCES customer(user_id)
+                on delete cascade 
+                on update cascade,
+                FOREIGN KEY (checked_by) REFERENCES branch_employee(user_id)
+                on delete set null 
+                on update cascade,
+                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
+                on delete set null 
+                on update cascade ,
+                FOREIGN KEY (reserved_chauf_id) REFERENCES chauffeur(user_id)
+                on delete set null 
+                on update cascade,
                 PRIMARY KEY (reservation_number));""")
     print("Reservation table created successfully")
 
@@ -234,8 +276,12 @@ try:
                 cost float,
                 author_expertise_id int not null,
                 issued_reservation int not null,
-                FOREIGN KEY (author_expertise_id) REFERENCES damage_expertise(user_id),
-                FOREIGN KEY (issued_reservation) REFERENCES reservation(reservation_number),
+                FOREIGN KEY (author_expertise_id) REFERENCES damage_expertise(user_id)
+                on delete cascade 
+                on update cascade ,
+                FOREIGN KEY (issued_reservation) REFERENCES reservation(reservation_number)
+                on delete cascade 
+                on update cascade,
                 PRIMARY KEY (issue_id));""")
     print("Damage_Report table created successfully")
 
@@ -248,11 +294,21 @@ try:
                 checked_by_employee int,
                 isApproved boolean,
                 reason varchar(50),
-                FOREIGN KEY (made_by_customer) REFERENCES customer(user_id),
-                FOREIGN KEY (from_branch) REFERENCES branch(branch_id),
-                FOREIGN KEY (to_branch) REFERENCES branch(branch_id),
-                FOREIGN KEY (requested_vehicle) REFERENCES vehicle(license_plate),
-                FOREIGN KEY (checked_by_employee) REFERENCES branch_employee(user_id),
+                FOREIGN KEY (made_by_customer) REFERENCES customer(user_id)
+                on delete cascade 
+                on update cascade,
+                FOREIGN KEY (from_branch) REFERENCES branch(branch_id)
+                on delete cascade 
+                on update cascade ,
+                FOREIGN KEY (to_branch) REFERENCES branch(branch_id)
+                on delete cascade 
+                on update cascade ,
+                FOREIGN KEY (requested_vehicle) REFERENCES vehicle(license_plate)
+                on delete cascade 
+                on update cascade,
+                FOREIGN KEY (checked_by_employee) REFERENCES branch_employee(user_id)
+                on delete set null 
+                on update cascade,
                 PRIMARY KEY (req_id));""")
     print("Request table created successfully")
 
@@ -262,8 +318,12 @@ try:
                 comment text,
                 score int,
                 check (score in (1, 2, 3, 4, 5)),
-                FOREIGN KEY (customer_id) REFERENCES customer(user_id),
-                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate),
+                FOREIGN KEY (customer_id) REFERENCES customer(user_id)
+                on delete cascade 
+                on update cascade,
+                FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
+                on delete cascade 
+                on update cascade,
                 PRIMARY KEY (customer_id, license_plate));""")
     print("Vehicle_rate table created successfully")
 
@@ -273,8 +333,12 @@ try:
                 comment text,
                 score int,
                 check (score in (1, 2, 3, 4, 5)),
-                FOREIGN KEY (customer_id) REFERENCES customer(user_id),
-                FOREIGN KEY (branch_id) REFERENCES branch(branch_id),
+                FOREIGN KEY (customer_id) REFERENCES customer(user_id)
+                on delete cascade 
+                on update cascade ,
+                FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
+                on delete cascade 
+                on update cascade ,
                 PRIMARY KEY (customer_id, branch_id));""")
     print("Branch_rate table created successfully")
 
@@ -282,9 +346,15 @@ try:
                 assigned_expertise_id int not null,
                 assigning_manager_id int not null,
                 assigned_vehicle_license_plate varchar(8) not null,
-                FOREIGN KEY (assigned_expertise_id) REFERENCES damage_expertise(user_id),
-                FOREIGN KEY (assigning_manager_id) REFERENCES manager(user_id),
-                FOREIGN KEY (assigned_vehicle_license_plate) REFERENCES vehicle(license_plate),
+                FOREIGN KEY (assigned_expertise_id) REFERENCES damage_expertise(user_id)
+                on delete cascade 
+                on update cascade ,
+                FOREIGN KEY (assigning_manager_id) REFERENCES manager(user_id)
+                on delete cascade 
+                on update cascade,
+                FOREIGN KEY (assigned_vehicle_license_plate) REFERENCES vehicle(license_plate)
+                on delete cascade 
+                on update cascade ,
                 PRIMARY KEY (assigned_expertise_id, assigning_manager_id, assigned_vehicle_license_plate));""")
     print("Assign_check table created successfully")
 

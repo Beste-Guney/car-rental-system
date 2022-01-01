@@ -70,9 +70,9 @@ WSGI_APPLICATION = 'car_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rental2',
+        'NAME': 'rental3',
         'USER': 'root',
-        'PASSWORD': '123',
+        'PASSWORD': 'root',
         'HOST': '127.0.0.1',   # Or an IP Address that your DB is hosted on 127.0.0.1 or localhost
         'PORT': '3306',
     }
