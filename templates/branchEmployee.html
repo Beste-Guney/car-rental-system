@@ -51,6 +51,9 @@
             'manager': logged_in,
         },
         dataType: 'json',
+          beforeSend:function(){
+         return confirm("Are you sure to fire this employee?");
+      },
         success: function (data) {
           if(data['fired']){
               alert('succesfully fired your employee');

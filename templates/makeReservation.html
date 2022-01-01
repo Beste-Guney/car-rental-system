@@ -11,7 +11,7 @@
             <p class="m-1"><b>Kilometers: </b>{{ vehicle.6 }} km</p>
             <p class="m-1"><b>Model: </b>{{ vehicle.3 }}</p>
             <p class="m-1"><b>Car Rate: </b>*****</p>
-            <form action="{% url 'customer:customer_make_res' %}" method="post">
+            <form action="{% url 'customer:customer_make_res' %}" method="post" id="reservation_form">
                 {% csrf_token %}
                 {{ form }}
                 <button type="submit" class="btn btn-success mt-3">Reserve</button>
@@ -20,6 +20,13 @@
         <div class="col-sm-3"></div>
     </div>
 </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+ $('#reservation_form').submit(function() {
+    return window.confirm('Are you sure to make this reservation?');
+});
+</script>
+
 {% endif %}
 {% endblock %}
 

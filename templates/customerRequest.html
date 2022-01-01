@@ -6,7 +6,7 @@
         <div class="col-sm-1"></div>
        <div class="col-sm-6">
             <h1> Create Transfer Request</h1>
-            <form action="{% url 'customer:customer_create_request' %}" method="post">
+            <form action="{% url 'customer:customer_create_request' %}" method="post" id="create-request">
                 {% csrf_token %}
                 {{ form }}
                 <button type="submit" class="btn btn-success mt-3">Request</button>
@@ -53,4 +53,11 @@
     </div>
 </div>
 {% endif %}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+ $('#create-request').submit(function() {
+    var decision = window.confirm('Are you sure to make this request?');
+    return decision;
+});
+</script>
 {% endblock %}

@@ -73,6 +73,9 @@
           'employee_id': logged_in,
         },
         dataType: 'json',
+          beforeSend:function(){
+         return confirm("Are you sure to approve this request?");
+      },
         success: function () {
               alert('you accepted the request');
               location.reload();
@@ -94,6 +97,9 @@
           'employee_id': logged_in,
         },
         dataType: 'json',
+          beforeSend:function(){
+         return confirm("Are you sure to decline this request?");
+      },
         success: function () {
               alert('you declined the request');
               location.reload();

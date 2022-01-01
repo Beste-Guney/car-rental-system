@@ -26,7 +26,7 @@
                      <input type="date" name="start_date" id="start_date">
                      <label for="end_date">End Date</label>
                      <input type="date" name="end_date" id="end_date">
-                     <button type="submit" > Filter</button>
+                     <button type="submit" class="btn btn-success"> Filter</button>
                     </form>
             </div>
            <div class="container-fluid">
@@ -94,6 +94,9 @@
             'employee_id': logged_in,
         },
         dataType: 'json',
+          beforeSend:function(){
+         return confirm("Are you sure to approve this reseervation?");
+      },
         success: function () {
               alert('you accepted the reservation');
               location.reload();
@@ -114,6 +117,9 @@
             'employee_id': logged_in,
         },
         dataType: 'json',
+          beforeSend:function(){
+         return confirm("Are you sure to cancel this reseervation?");
+      },
         success: function () {
               alert('you declined the reservation');
               location.reload();
