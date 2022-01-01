@@ -3,9 +3,9 @@ from mysql.connector import Error
 
 try:
     connection = mysql.connector.connect(host='127.0.0.1',
-                                         database='rental3',
+                                         database='rental2',
                                          user='root',
-                                         password='root')
+                                         password='123')
 
     if connection.is_connected():
         db_Info = connection.get_server_info()
@@ -217,9 +217,8 @@ try:
                 insurance_type varchar(20),
                 license_plate varchar(8),
                 reserved_chauf_id int,
-                isChaufAccepted varchar(5),
+                isChaufAccepted bool,
                 check (isApproved  in ("true", "false")),
-                check (isChaufAccepted in ("true", "false")),
                 check (status in ("on_rent", "accepted", "not_accepted", "canceled", "paid", "not_paid")),
                 FOREIGN KEY (reserver) REFERENCES customer(user_id),
                 FOREIGN KEY (checked_by) REFERENCES branch_employee(user_id),
@@ -402,6 +401,9 @@ try:
 
     # damage report
 
+    # chauffeur
+    result = cursor.execute("""insert into chauffeur values(107, "car", 20);""")
+
     # reservation
     result = cursor.execute(
         """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
@@ -410,19 +412,20 @@ try:
         """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
-        """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("13-27-2021","%m-%d-%Y"), "not_accepted", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("11-27-2021","%m-%d-%Y"), "not_accepted", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
-        """insert into reservation values(4, STR_TO_DATE("10-17-2021","%m-%d-%Y"), STR_TO_DATE("14-27-2021","%m-%d-%Y"), "not_accepted", 120, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(4, STR_TO_DATE("10-17-2021","%m-%d-%Y"), STR_TO_DATE("10-27-2021","%m-%d-%Y"), "not_accepted", 120, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
         """insert into reservation values(5, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 450, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
         """insert into reservation values(6, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 56, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+    
+    result = cursor.execute(
+        """insert into reservation values(7, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
 
-    # chauffeur
-    result = cursor.execute("""insert into chauffeur values(107, "car", 20);""")
 
     # vehicle_rate
     result = cursor.execute("""insert into vehicle_rate values(100, "06AY6527", "Very good car!", 5);""")

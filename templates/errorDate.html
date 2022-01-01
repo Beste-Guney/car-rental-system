@@ -1,0 +1,14 @@
+{% extends 'customerbase.html' %}
+{% block content %}
+{% if request.session.user_type == 'customer' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-12">
+            <div class="alert alert-danger" role="alert">
+                Please select valid start and end dates. {{ message }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
