@@ -97,6 +97,9 @@
             'manager_id': logged_in,
         },
         dataType: 'json',
+          beforeSend:function(){
+         return confirm("Are you sure to fire buy this car?");
+      },
         success: function (data) {
           if(data.can_buy){
               alert('succesfully bought');

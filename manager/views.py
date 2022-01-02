@@ -463,34 +463,34 @@ class FilterView(View):
         #if plate is entered find the car
         if license:
             cursor.execute(
-                'create view filter6 as select * from vehicle where license_plate like \'' + license + '%\''
+                'create view filter_plate as select * from vehicle where license_plate like \'' + license + '%\''
             )
         else:
             cursor.execute(
-                'create view filter6 as select * from vehicle;'
+                'create view filter_plate as select * from vehicle;'
             )
          # filtering according to other conditions
         if int(age) != -1:
             print('here1')
             upper_bound = int(age) + 5
             cursor.execute(
-                        'create view filter1 as select * from filter6 where age between\'' + str(age) + '\'and \'' + str(upper_bound) +'\';'
+                        'create view filter_age as select * from filter_plate where age between\'' + str(age) + '\'and \'' + str(upper_bound) +'\';'
             )
 
         else:
             cursor.execute(
-                        'create view filter1 as '
-                        'select * from filter6;'
+                        'create view filter_age as '
+                        'select * from filter_plate;'
             )
 
         if model != 'empty':
             cursor.execute(
-                        'create view filter2 as select * from filter1 where model=\'' + model + '\';'
+                        'create view filter_model as select * from filter_age where model=\'' + model + '\';'
             )
         else:
             cursor.execute(
-                        'create view filter2 as '
-                        'select * from filter1;'
+                        'create view filter_model as '
+                        'select * from filter_age;'
             )
 
         if int(kilometers) != -1:
@@ -498,43 +498,43 @@ class FilterView(View):
 
             if int(kilometers) == 40000:
                 cursor.execute(
-                            'create view filter3 as '
-                            'select * from filter2 where kilometers > 40000;'
+                            'create view filter_km as '
+                            'select * from filter_model where kilometers > 40000;'
                 )
             else:
                 upper_bound = int(kilometers) * 2
                 cursor.execute(
-                            'create view filter3 as select * from filter2 where kilometers between ' + str(kilometers) + ' and ' + str(upper_bound) +';'
+                            'create view filter_km as select * from filter_model where kilometers between ' + str(kilometers) + ' and ' + str(upper_bound) +';'
                 )
 
 
         else:
             cursor.execute(
-                        'create view filter3 as '
-                        'select * from filter2;'
+                        'create view filter_km as '
+                        'select * from filter_model;'
             )
 
         if int(high) == 0:
             cursor.execute(
-                        'create view filter4 as select * from filter3 where daily_rent_price > ' + str(low) + ';'
+                        'create view filter_price as select * from filter_km where daily_rent_price > ' + str(low) + ';'
             )
         else:
             cursor.execute(
-                        'create view filter4 as select * from filter3 where daily_rent_price between ' + str(low) + ' and ' + str(high) +';'
+                        'create view filter_price as select * from filter_km where daily_rent_price between ' + str(low) + ' and ' + str(high) +';'
             )
 
         if brand != 'empty':
             cursor.execute(
-                        'create view filter5 as select * from filter4 where brand=\'' + brand + '\';'
+                        'create view filter_brand as select * from filter_price where brand=\'' + brand + '\';'
             )
         else:
             cursor.execute(
-                        'create view filter5 as select * from filter4;'
+                        'create view filter_brand as select * from filter_price;'
             )
 
         #gathering filtered vehicles
         cursor.execute(
-                'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate and vehicle.branch_id = ' + str(branch_id) + ';'
+                'select * from vehicle, filter_brand where vehicle.license_plate = filter_brand.license_plate and vehicle.branch_id = ' + str(branch_id) + ';'
         )
         result = cursor.fetchall()
         vehicle_info = []
@@ -543,12 +543,12 @@ class FilterView(View):
             item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
             vehicle_info.append(item_detail)
 
-        cursor.execute('drop view filter1')
-        cursor.execute('drop view filter2')
-        cursor.execute('drop view filter3')
-        cursor.execute('drop view filter4')
-        cursor.execute('drop view filter5')
-        cursor.execute('drop view filter6')
+        cursor.execute('drop view filter_age')
+        cursor.execute('drop view filter_model')
+        cursor.execute('drop view filter_km')
+        cursor.execute('drop view filter_price')
+        cursor.execute('drop view filter_brand')
+        cursor.execute('drop view filter_plate')
         models, brands = models_and_brands()
 
         return render(request, 'branchCarsManaager.html',
