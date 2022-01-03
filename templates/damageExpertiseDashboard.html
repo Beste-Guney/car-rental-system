@@ -1,0 +1,42 @@
+{% extends 'baseDamageExpertise.html' %}
+{% block content %}
+{% if request.session.user_type == 'damage_expert' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-9">
+            <h1>Reservations to Check</h1>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Vehicle Plate</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Review</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for res in paid_res %}
+                <tr>
+                    <th scope="row">{{ res.0 }}</th>
+                    <td>{{ res.10 }}</td>
+                    <td>{{ res.1 }}</td>
+                    <td>{{ res.2 }}</td>
+                    <td>
+                        <form action="{% url 'damage_expert:damage-expert-dashboard' request.session.logged_in_user %}" method='post'>
+                            {% csrf_token %}
+                            {{ form }}
+                            <input type='hidden' name="reservationNo" value="{{ res.0 }}"/>
+                            <button type="submit" class="btn btn-success">Review</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endif %}
+{% endblock %}

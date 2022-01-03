@@ -7,6 +7,7 @@ try:
                                          user='root',
                                          password='root')
 
+
     if connection.is_connected():
         db_Info = connection.get_server_info()
         print("Connected to MySQL Server version ", db_Info)
@@ -275,7 +276,7 @@ try:
     print("Reservation table created successfully")
 
     result = cursor.execute("""create table damage_report(
-                issue_id int not null,
+                issue_id int not null auto_increment,
                 description text,
                 type varchar(20),
                 cost float,
@@ -419,9 +420,9 @@ try:
     result = cursor.execute("""insert into insurance values(500, "Low Coverage");""")
 
     # branch
-    result = cursor.execute("""insert into branch values(1, 150000,"Ankara");""")
+    result = cursor.execute("""insert into branch values(1, 150000000,"Ankara");""")
     result = cursor.execute("""insert into branch values(2, 270000,"Istanbul");""")
-    result = cursor.execute("""insert into branch values(3, 1500000,"New York");""")
+    result = cursor.execute("""insert into branch values(3, 15000,"New York");""")
 
     # employee
     result = cursor.execute("""insert into employee values(105, 6000,"Ahmet Mehmet",1);""")
@@ -526,6 +527,7 @@ try:
     #
     # result = cursor.execute(
     #     """insert into reservation values(11, STR_TO_DATE("11-19-2021","%m-%d-%Y"), STR_TO_DATE("12-26-2021","%m-%d-%Y"), "paid", 190, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+
 
     # vehicle_rate
     result = cursor.execute("""insert into vehicle_rate values(100, "06AY6527", "Very good car!", 5);""")

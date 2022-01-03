@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'manager',
     'employee',
     'customer',
-    'chauffeur'
+    'chauffeur',
+    'damage_expert'
 ]
 
 MIDDLEWARE = [
