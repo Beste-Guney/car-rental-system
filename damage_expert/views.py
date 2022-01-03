@@ -71,14 +71,10 @@ class ReviewReservation(View):
         form = ReviewReservationForm(request.POST, resNo = None)
         if form.is_valid():
             user_id = request.session['logged_in_user']
-            reason = form.cleaned_data['reason']
+            review = form.cleaned_data['review']
             resNo = form.cleaned_data['reservationNo']
-            sql = "SELECT cost FROM reservation WHERE reservation_number = {};".format(resNo)
-            cursor = connection.cursor()
-            cursor.execute(sql)
-            cost = cursor.fetchall()
-            print("cost = ", cost[0][0])
-            sql = "INSERT INTO damage_report (issue_id, description, type, cost, author_expertise_id, issued_reservation) VALUES (NULL, '{}', NULL, {}, {}, {});".format(reason, cost[0][0], user_id, resNo)
+            cost = form.cleaned_data['cost']
+            sql = "INSERT INTO damage_report (issue_id, description, type, cost, author_expertise_id, issued_reservation) VALUES (NULL, '{}', NULL, {}, {}, {});".format(review, cost, user_id, resNo)
             cursor = connection.cursor()
             cursor.execute(sql)
             context = {

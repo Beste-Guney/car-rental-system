@@ -67,8 +67,8 @@ class RequestsView(View):
         cursor.execute(
             'select customer.customer_name, B1.branch_name, B2.branch_name, request.requested_vehicle, request.reason, request.req_id, request.isApproved, request.to_branch '
             #'from request where request.checked_by_employee = ' + str(user_id) + ';'
-            'from request, customer, branch B1, branch B2 where request.made_by_customer = customer.user_id and '
-            'B1.branch_id = request.from_branch and B2.branch_id = request.to_branch;'
+            'from request, customer, branch B1, branch B2, employee WHERE employee.branch_id = request.from_branch and employee.user_id = {} and request.made_by_customer = customer.user_id and '
+            'B1.branch_id = request.from_branch and B2.branch_id = request.to_branch;'.format(user_id)
         )
         result = cursor.fetchall()
         for res in result:
@@ -343,7 +343,8 @@ class FilterVehicles(View):
         vehicle_info = []
 
         for car in result:
-            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
+            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6], car[7]]
+            print(item_detail)
             vehicle_info.append(item_detail)
 
         cursor.execute('drop view filter1')

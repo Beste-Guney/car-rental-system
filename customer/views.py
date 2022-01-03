@@ -284,6 +284,9 @@ class MakeReservation(View):
                 return redirect('/customer/errorDate')
 
             rental_period_in_days = abs((end_date - start_date).days)
+            if rental_period_in_days == 0:
+                rental_period_in_days = 1
+
             cost = rental_period_in_days * daily_cost
 
             cursor = connection.cursor()
@@ -445,12 +448,35 @@ class OrderReservations(View):
         }
         return render(request, 'listReservations.html', context)
 
+class PenaltiesView(View):
+    def get(self, request):
+        reserver = request.session['logged_in_user']
+        sql = "SELECT issue_id, description, dr.cost, author_expertise_id, license_plate FROM damage_report dr, reservation r WHERE r.reservation_number = dr.issued_reservation and r.reserver = {}".format(reserver)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        userPenalties = cursor.fetchall()
+        context = {'penalties' : userPenalties, 'message' : ""}
+        return render(request, 'listPenalties.html', context)
+    def post(self, request):
+        reserver = request.session['logged_in_user']
+        issue = request.POST.get('issueId', "")
+        sql = "DELETE FROM damage_report WHERE issue_id = {}".format(issue)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        sql = "SELECT issue_id, description, dr.cost, author_expertise_id, license_plate FROM damage_report dr, reservation r WHERE r.reservation_number = dr.issued_reservation and r.reserver = {}".format(reserver)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        userPenalties = cursor.fetchall()
+        context = {'penalties' : userPenalties, 'message' : "Successfully paid penalty."}
+        return render(request, 'listPenalties.html', context)
+    
+
 def cancelReservation( request):
     reservation = request.GET.get('reservation', None)
     customer = request.GET.get('customer', None)
 
     cursor = connection.cursor()
-    cursor.execute('update reservation set status = \'canceled \'where reservation_number = ' + str(reservation) + ';')
+    cursor.execute('update reservation set status = \'canceled\' where reservation_number = ' + str(reservation) + ';')
 
     data = {}
     data['canceled'] = True
