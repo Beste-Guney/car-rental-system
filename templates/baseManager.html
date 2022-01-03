@@ -38,6 +38,9 @@
                         <a class="nav-link active" aria-current="page" href="/management/buyCar/{{ branch_id }}">Buy Car</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'manager:manager-assign-vehicle' %}">Assign Vehicle</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{% url 'manager:logout' %}">Logout</a>
                     </li>
                 </ul>

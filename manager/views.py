@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
 from django.http import JsonResponse
-from manager.forms import BranchEmployeeCreationForm, ChauffeurCreationForm, DamageExpertCreationForm
+from manager.forms import AssignCheckForm, BranchEmployeeCreationForm, ChauffeurCreationForm, DamageExpertCreationForm
 import datetime
 
 # Create your views here.
@@ -826,3 +826,32 @@ def ajaxFireEmployee(request):
     data = {}
     data['fired'] = True
     return JsonResponse(data)
+
+class AssignVehicleCheck(View):
+    def get(self, request):
+        user_id = request.session['logged_in_user']
+        branchId, branch_name, employee_name = get_branch_employee_info(user_id)
+        form = AssignCheckForm(branch_id = branchId)
+        context = {
+            'form' : form,
+            'message' : "",
+            'branch_name':branch_name, 'branch_id': branchId
+        }
+        return render(request, 'managerAssignVehicle.html', context)
+    def post(self, request): 
+        user_id = request.session['logged_in_user']
+        branchId, branch_name, employee_name = get_branch_employee_info(user_id)
+        form = AssignCheckForm(request.POST, branch_id = branchId)
+        if form.is_valid():
+            expertise = form.cleaned_data['damage_expertise']
+            vehicle = form.cleaned_data['vehicle']
+            sql = "INSERT INTO assign_check (assigned_expertise_id, assigning_manager_id, assigned_vehicle_license_plate) VALUES ({}, {}, '{}');".format(expertise, user_id, vehicle)
+            cursor = connection.cursor()
+            cursor.execute(sql)
+        form = AssignCheckForm(branch_id = branchId)
+        context = {
+            'form' : form,
+            'message' : "Assignment successful.",
+            'branch_name':branch_name, 'branch_id': branchId
+        }
+        return render(request, 'managerAssignVehicle.html', context)
