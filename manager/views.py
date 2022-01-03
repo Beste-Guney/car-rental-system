@@ -59,6 +59,9 @@ class ManagerMainPage(View):
 class BranchCarView(View):
 
     def get(self, request, branch_id):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
         cursor = connection.cursor()
         cursor.execute(
             'select * from vehicle where branch_id=\'' + str(branch_id) + '\''
@@ -82,12 +85,15 @@ class BranchCarView(View):
         models, brands = models_and_brands()
 
         return render(request, 'branchCarsManaager.html',
-                      {'vehicles': vehicle_info, 'name': name, 'branch_id': branch_id, 'models': models,
+                      {'vehicles': vehicle_info, 'name': name,'branch_name':branch_name, 'branch_id': branch_id, 'models': models,
                        'brands': brands})
 
 
 class BuyCarView(View):
     def get(self, request, branch_id):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
         cursor = connection.cursor()
         cursor.execute(
             'select * from vehicle where status=\'onsale\''
@@ -103,7 +109,7 @@ class BuyCarView(View):
         models, brands = models_and_brands()
 
         #sending models
-        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info, 'branch_id' : branch_id, 'models': models, 'brands': brands})
+        return render(request, 'managerBuyCars.html', {'vehicles': vehicle_info, 'branch_id' : branch_id, 'branch_name': branch_name, 'models': models, 'brands': brands})
 
 
 def models_and_brands():
@@ -187,6 +193,9 @@ def findEmployeeType(id):
 class EmployeeView(View):
 
     def get(self, request, branch_id):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
         # fetching all employees at that branch
         cursor = connection.cursor()
         cursor.execute(
@@ -198,6 +207,7 @@ class EmployeeView(View):
         employee_list = []
 
         for emp in result:
+            print(emp)
             type = findEmployeeType(emp[0])
             employee_info = [emp[0], emp[1], emp[2], type]
             employee_list.append(employee_info)
@@ -210,11 +220,13 @@ class EmployeeView(View):
         name = result[0]
 
         return render(request, 'branchEmployee.html',
-                      {'employees': employee_list, 'name': name, 'branch_id': branch_id})
+                      {'employees': employee_list, 'name': name, 'branch_id': branch_id, 'branch_name':branch_name})
 
 
 class AddBranchEmployeeView(View):
     def post(self, request):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
 
         # getting current branch
         cursor = connection.cursor()
@@ -266,10 +278,13 @@ class AddBranchEmployeeView(View):
 
         else:
             form = BranchEmployeeCreationForm()
-            context = {'form': form}
+            context = {'form': form, 'branch_name':branch_name}
             return render(request, 'managerAddBranchEmployee.html', context)
 
     def get(self, request):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
         # getting current branch
         cursor = connection.cursor()
         cursor.execute(
@@ -280,7 +295,7 @@ class AddBranchEmployeeView(View):
         result = result[0]
         branch_id = result[3]
         form = BranchEmployeeCreationForm()
-        context = {'form': form, 'branch_id': branch_id}
+        context = {'form': form, 'branch_id': branch_id, 'branch_name':branch_name}
         return render(request, 'managerAddBranchEmployee.html', context)
 
 
@@ -341,6 +356,9 @@ class AddChauffeurView(View):
             return render(request, 'managerAddChauffeur.html', context)
 
     def get(self, request):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
         # getting current branch
         cursor = connection.cursor()
         cursor.execute(
@@ -352,7 +370,7 @@ class AddChauffeurView(View):
         branch_id = result[3]
 
         form = ChauffeurCreationForm()
-        context = {'form': form, 'branch_id': branch_id}
+        context = {'form': form, 'branch_id': branch_id, 'branch_name':branch_name}
         return render(request, 'managerAddChauffeur.html', context)
 
 
@@ -412,6 +430,9 @@ class AddDamageExpertView(View):
             return render(request, 'managerAddDamageExpert.html', context)
 
     def get(self, request):
+        user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
         # getting current branch
         cursor = connection.cursor()
         cursor.execute(
@@ -422,14 +443,15 @@ class AddDamageExpertView(View):
         result = result[0]
         branch_id = result[3]
         form = DamageExpertCreationForm()
-        context = {'form': form, 'branch_id': branch_id}
+        context = {'form': form, 'branch_id': branch_id, 'branch_name':branch_name}
         return render(request, 'managerAddDamageExpert.html', context)
 
 
 class FilterView(View):
     def post(self, request):
         user_id = request.session['logged_in_user']
-        print(request.POST)
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
 
         #finding the branch id information
         cursor = connection.cursor()
@@ -552,12 +574,14 @@ class FilterView(View):
         models, brands = models_and_brands()
 
         return render(request, 'branchCarsManaager.html',
-                              {'vehicles': vehicle_info, 'name': name, 'branch_id': branch_id, 'models': models,
+                              {'vehicles': vehicle_info, 'name': name, 'branch_id': branch_id, 'branch_name':branch_name, 'models': models,
                                'brands': brands})
 
 class FilterForBuyingView(View):
     def post(self, request):
         user_id = request.session['logged_in_user']
+        branch_id, branch_name, employee_name = get_branch_employee_info(user_id)
+
         print(request.POST)
 
         #finding the branch id information
@@ -683,7 +707,7 @@ class FilterForBuyingView(View):
 
         models, brands = models_and_brands()
         return render(request, 'managerBuyCars.html',
-                              {'vehicles': vehicle_info, 'branch_id': branch_id, 'models': models, 'brands': brands})
+                              {'vehicles': vehicle_info, 'branch_name':branch_name,'branch_id': branch_id, 'models': models, 'brands': brands})
 
 
 class StatisticsView(View):

@@ -62,7 +62,7 @@
                     <p class="m-1"><b>Age: </b>{{ car.6 }}</p>
                     <p class="m-1"><b>Kilometers: </b>{{ car.7 }}</p>
                     <p class="m-1"><b>Price: </b>{{ car.5 }}</p>
-                    <button type="button"  value='{{ car.0 }}' class="btn btn-success" >Buy</button>
+                    <button type="button"  value='{{ car.0 }}' class="btn btn-success buy" >Buy</button>
                                         <input type="hidden" id='session' value="{{ request.session.logged_in_user }}">
 
                 </div>
@@ -75,7 +75,7 @@
                     <p class="m-1"><b>Age: </b>{{ car.6 }}</p>
                     <p class="m-1"><b>Kilometers: </b>{{ car.7 }}</p>
                     <p class="m-1"><b>Price: </b>{{ car.5 }}</p>
-                   <button type="button" value='{{ car.0 }}' class="btn btn-success">Buy</button>
+                   <button type="button" value='{{ car.0 }}' class="btn btn-success buy">Buy</button>
                                     <input type="hidden" id='session' value="{{ request.session.logged_in_user }}">
                 </div>
                 {% endif %}
@@ -86,7 +86,7 @@
     <script>
     console.log('script exectued');
 
-    $(".btn").on("click", function () {
+    $(".buy").on("click", function () {
       var buyedCar = $(this).val();
       var logged_in = $('#session').val();
 
@@ -98,7 +98,7 @@
         },
         dataType: 'json',
           beforeSend:function(){
-         return confirm("Are you sure to fire buy this car?");
+         return confirm("Are you sure to buy this car?");
       },
         success: function (data) {
           if(data.can_buy){
