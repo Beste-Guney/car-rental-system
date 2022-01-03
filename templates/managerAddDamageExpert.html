@@ -10,7 +10,12 @@
                 <h1 style="text-align: center;font-size: 20px;" class="display-1" >Customer Register Page</h1>
             <form action="{% url 'manager:add-damage-expert' %}" method="post">
             {% csrf_token %}
-                {{ form.as_p }}
+                {%for field in form %}
+                <div class="control-group {%if field.errors %}error{%endif%}">
+                <label>{{ field.label_tag }}</label>
+                {{ field }}
+                </div>
+                {% endfor %}
             <input type="submit" class='btn btn-primary mt-3 btn-lg btn-block'value="Submit">
             </form></div>
                 <div class="col-3"></div>

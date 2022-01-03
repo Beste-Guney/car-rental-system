@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1>Vehicles at {{ branch_name }}</h1>
-                    <form class="form-inline" role="form" action="{% url 'manager:filter-vehicle' %}" method="post">
+                    <form class="form-inline" role="form" action="{% url 'employee:filter_vehicle_branch' %}" method="post">
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="sr-only" for="name">Enter License Plate</label>

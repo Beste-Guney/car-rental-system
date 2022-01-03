@@ -3,7 +3,6 @@
 {% if request.session.user_type == 'customer' %}
 <div class="container">
     <div class="row mt-5">
-        <div class="col-sm-2"></div>
         <div class="col-sm-8">
             <table class="table">
                 <thead class="thead-dark">
@@ -28,7 +27,15 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-sm-2"></div>
+        <div class="col-sm-4">
+            <h4>Rate Vehicle</h4>
+            <form action="{% url 'customer:customer_rate_vehicle' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn btn-success mt-3">Evaluate</button>
+            </form>
+            {% include 'messages.html' %}
+        </div>
     </div>
 </div>
 {% endif %}

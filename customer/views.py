@@ -1,15 +1,15 @@
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
 from pymysql import IntegrityError
-
+import datetime
 from .forms import CarPlate, MakeReservationForm, VehicleRate, CreateRequestForm, BranchRate, ReservationNo, Pay
 from datetime import date
 
 
 class PayVehicle(View):
-
     def post(self, request, resno):
         form = Pay(request.POST)
 
@@ -268,6 +268,8 @@ class MakeReservation(View):
     def post(self, request):
 
         user_id = request.session['logged_in_user']
+        error_message = ''
+
         form = MakeReservationForm(request.POST, user=user_id, license_plate=None, daily_cost=None)
         if form.is_valid():
             reserver_id = form.cleaned_data['reserver_id']
@@ -282,6 +284,9 @@ class MakeReservation(View):
                 return redirect('/customer/errorDate')
 
             rental_period_in_days = abs((end_date - start_date).days)
+            if rental_period_in_days == 0:
+                rental_period_in_days = 1
+
             cost = rental_period_in_days * daily_cost
 
             cursor = connection.cursor()
@@ -292,6 +297,37 @@ class MakeReservation(View):
                 insurances = cursor.fetchall()
                 insurance_type = insurances[0][0]
 
+            # some assertions are needed before inserting a new reservation
+
+            # assertion 1- if the car to be reserved is not available
+
+            #assertion 2- if you already have an reservation that day
+
+            #these two assertions are provided at triggers
+
+            #assertion 3- if the user has not paid for a reservation before
+            assertion_3_sql = " select * from reservation where reserver = " + str(user_id) + " and status = \'not_paid\'"
+            cursor.execute(assertion_3_sql)
+            result = cursor.fetchall()
+            if len(result) != 0:
+                print('hfjdfhdjfj')
+                error_message = 'First pay your previous reservations'
+                return render(request, 'error.html', {'message': error_message})
+
+            #assertion 4- if user driving license info doesnt allow it to rent this car
+            assertion_4_sql = "select car_type from vehicle natural join car where license_plate = \'" + str(license_plate) + '\';'
+            cursor.execute(assertion_4_sql)
+            result_car_type = cursor.fetchall()
+            result_car_type = result_car_type[0]
+
+            cursor.execute('select license_type from driving_license where user_id = \'' + str(user_id) + '\';')
+            result_user_license = cursor.fetchall()
+            result_user_license = result_user_license[0]
+            if result_user_license[0][0:1] != result_car_type[0] and chauffeur_id == 'NULL':
+                error_message = 'You cannot drive this car, you need a chaeffuer'
+                return render(request, 'error.html', {'message': error_message})
+
+
             sql = """
             INSERT INTO `reservation` 
             (`start_date`, `end_date`, `status`, `cost`, `reserver`, 
@@ -301,11 +337,15 @@ class MakeReservation(View):
                    chauffeur_id)
 
             print(sql)
-            cursor.execute(sql)
+            try:
+                cursor.execute(sql)
+            except Exception as ex:
+                error_message = 'It is not available to make reservation'
+                return render(request, 'error.html', {'message': error_message})
 
             return redirect('/customer/reservationsuccess')
 
-        return redirect('/customer/error')
+        return render(request, 'error.html', {'message': error_message})
 
     def get(self, request, plate) -> 'html':
         cursor = connection.cursor()
@@ -336,13 +376,22 @@ class CustomerDashboard(View):
         return render(request, 'customerDashboard.html')
 
     def get(self, request) -> 'html':
+        user_id = request.session['logged_in_user']
         cursor = connection.cursor()
         cursor.execute(
             'SELECT * FROM vehicle NATURAL JOIN branch WHERE status = \'available\';'
         )
         desc = cursor.fetchall()
+
+        # some statistics for the customer
+        cursor.execute('SELECT (select branch_name from branch where branch_id = V.branch_id) as name, count(*) as number_of_reservations, (select score from branch_rate where branch_id = V.branch_id and customer_id = R.reserver) as your_score, avg(cost) as cost FROM reservation R, vehicle V where R.license_plate = V.license_plate and R.reserver = ' + str(user_id) + ' and R.status <> \'canceled\' group by V.branch_id;')
+        result = cursor.fetchall()
+        for res in result:
+            print(res)
+
         context = {
             'vehicles': desc,
+            'info': result,
         }
         return render(request, 'customerDashboard.html', context)
 
@@ -374,3 +423,61 @@ class ListReservations(View):
             'reservations': result
         }
         return render(request, 'listReservations.html', context)
+
+class OrderReservations(View):
+    def post(self, request):
+        order = request.POST['order-by']
+        reserver = request.session['logged_in_user']
+        cursor = connection.cursor()
+
+        if int(order) == 1:
+            cursor.execute(
+                'SELECT * FROM reservation WHERE reserver =' + str(reserver) + ' order by start_date;'
+            )
+        elif int(order) == 2:
+            cursor.execute(
+                'SELECT * FROM reservation WHERE reserver =' + str(reserver) + ' order by cost;'
+            )
+        else:
+            cursor.execute(
+                'SELECT * FROM reservation WHERE reserver =' + str(reserver) + ' order by end_date;'
+            )
+        result = cursor.fetchall()
+        context = {
+            'reservations': result
+        }
+        return render(request, 'listReservations.html', context)
+
+class PenaltiesView(View):
+    def get(self, request):
+        reserver = request.session['logged_in_user']
+        sql = "SELECT issue_id, description, dr.cost, author_expertise_id, license_plate FROM damage_report dr, reservation r WHERE r.reservation_number = dr.issued_reservation and r.reserver = {}".format(reserver)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        userPenalties = cursor.fetchall()
+        context = {'penalties' : userPenalties, 'message' : ""}
+        return render(request, 'listPenalties.html', context)
+    def post(self, request):
+        reserver = request.session['logged_in_user']
+        issue = request.POST.get('issueId', "")
+        sql = "DELETE FROM damage_report WHERE issue_id = {}".format(issue)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        sql = "SELECT issue_id, description, dr.cost, author_expertise_id, license_plate FROM damage_report dr, reservation r WHERE r.reservation_number = dr.issued_reservation and r.reserver = {}".format(reserver)
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        userPenalties = cursor.fetchall()
+        context = {'penalties' : userPenalties, 'message' : "Successfully paid penalty."}
+        return render(request, 'listPenalties.html', context)
+    
+
+def cancelReservation( request):
+    reservation = request.GET.get('reservation', None)
+    customer = request.GET.get('customer', None)
+
+    cursor = connection.cursor()
+    cursor.execute('update reservation set status = \'canceled\' where reservation_number = ' + str(reservation) + ';')
+
+    data = {}
+    data['canceled'] = True
+    return JsonResponse(data)

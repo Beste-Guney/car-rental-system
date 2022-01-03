@@ -12,7 +12,8 @@ class ReservationCheck(forms.Form):
         super().__init__(*args, **kwargs)
 
 class ReviewReservationForm(forms.Form):
-    reason = forms.CharField(widget=forms.Textarea(attrs={'name': 'body', 'rows': 8, 'cols': 8}))
+    review = forms.CharField(widget=forms.Textarea(attrs={'name': 'body', 'rows': 8, 'cols': 8}))
+    cost = forms.FloatField(required=True)
     reservationNo = forms.CharField(widget=forms.HiddenInput())
     def __init__(self, *args, **kwargs):
         reservationNo = kwargs.pop('resNo')

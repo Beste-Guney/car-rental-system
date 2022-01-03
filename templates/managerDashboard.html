@@ -3,7 +3,43 @@
 {% block content %}
 
     {% if request.session.user_type == 'manager' %}
+
         <div class="container">
+            <div class="row">
+                <div class="col-lg">
+                    <h3>Welcome to branch {{ branch_name }}</h3>
+                    <h4>This is your branch information and some important statistics about your branch</h4>
+                    <h4>Budget: {{ budget }}</h4>
+                    <h4>Monthly Salary Expense: {{ sum_salary }}</h4>
+                    <h4>Number of Cars You have in this branch: {{ total_car }} </h4>
+                </div>
+            </div>
+               <div class="container">
+         <div class="row">
+            <div class="col-lg">
+                <table class="table">
+              <thead>
+               The total income and most harworking employee for month
+                <tr>
+                  <th scope="col">Month</th>
+                    <th scope="col">Employee Name</th>
+                  <th scope="col">Total Income</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for item in month_info %}
+                  <tr>
+                  <th scope="row">{{ item.0 }}</th>
+                  <td>{{ item.1 }}</td>
+                  <td>{{ item.2 }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+
+            </div>
+          </div></div>
+
           <div class="row">
             <div class="col-lg">
                 <table class="table">
@@ -29,6 +65,7 @@
 
             </div>
           </div></div>
+
         </div>
         <div class="container">
          <div class="row">
@@ -43,7 +80,14 @@
                 </tr>
               </thead>
               <tbody>
-              {% for key,value in approve_deny.items %}
+              {% for key,value in approve.items %}
+                  <tr>
+                  <th scope="row">{{ key }}</th>
+                  <td>{{ value.1 }}</td>
+                  <td>{{ value.0 }}</td>
+                </tr>
+              {% endfor %}
+              {% for key,value in deny.items %}
                   <tr>
                   <th scope="row">{{ key }}</th>
                   <td>{{ value.1 }}</td>
