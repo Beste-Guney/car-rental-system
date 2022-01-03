@@ -1,0 +1,38 @@
+{% extends 'baseDamageExpertise.html' %}
+{% block content %}
+{% if request.session.user_type == 'damage_expert' %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-9">
+            <h1>Reservations to Check</h1>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Assigned By</th>
+                    <th scope="col">Assigned Vehicle</th>
+                    <th scope="col">Check</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for asg in assigned %}
+                <tr>
+                    <th scope="row">{{ asg.1 }}</th>
+                    <td>{{ asg.2 }}</td>
+                    <td>
+                        <form action="{% url 'damage_expert:damage-expert-check' request.session.logged_in_user %}" method='post'>
+                            {% csrf_token %}
+                            {{ form }}
+                            <input type='hidden' name="licensePlate" value="{{ asg.2 }}"/>
+                            <button type="submit" class="btn btn-success">Check</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% endif %}
+{% endblock %}

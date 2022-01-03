@@ -5,7 +5,7 @@ try:
     connection = mysql.connector.connect(host='127.0.0.1',
                                          database='rental2',
                                          user='root',
-                                         password='123')
+                                         password='y]k;Rmv}6<2hyMWp')
 
     if connection.is_connected():
         db_Info = connection.get_server_info()
@@ -228,7 +228,7 @@ try:
     print("Reservation table created successfully")
 
     result = cursor.execute("""create table damage_report(
-                issue_id int not null,
+                issue_id int not null auto_increment,
                 description text,
                 type varchar(20),
                 cost float,
@@ -406,16 +406,16 @@ try:
 
     # reservation
     result = cursor.execute(
-        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "paid", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
-        """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "paid", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
-        """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("11-27-2021","%m-%d-%Y"), "not_accepted", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("11-27-2021","%m-%d-%Y"), "paid", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
-        """insert into reservation values(4, STR_TO_DATE("10-17-2021","%m-%d-%Y"), STR_TO_DATE("10-27-2021","%m-%d-%Y"), "not_accepted", 120, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+        """insert into reservation values(4, STR_TO_DATE("10-17-2021","%m-%d-%Y"), STR_TO_DATE("10-27-2021","%m-%d-%Y"), "paid", 120, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
     result = cursor.execute(
         """insert into reservation values(5, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 450, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
