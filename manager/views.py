@@ -726,18 +726,18 @@ class StatisticsView(View):
         cursor = connection.cursor()
         cursor.execute('select budget from branch where branch_id = ' + str(branch_id) + ';')
         result = cursor.fetchall()
-        budget = str(result[0])
+        budget = str(result[0][0])
 
         #total cost of salaries
         cursor.execute('select sum(salary) from employee where branch_id = ' + str(branch_id) + ';')
         result = cursor.fetchall()[0]
-        sum_salary = result
+        sum_salary = result[0]
 
 
         #total number of cars in the branch
         cursor.execute('select count(*) as car_count from vehicle where branch_id = ' + str(branch_id) + ';')
         result = cursor.fetchall()[0]
-        total_cars = result
+        total_cars = result[0]
 
         cursor.execute(
             'select B.user_id, (select employee_name from employee where employee.user_id = B.user_id) as name, T.cost, T.start_date from branch_employee B, (select reservation_number, checked_by, max(cost) as cost, start_date  from reservation group by month(start_date)) as T where T.checked_by = B.user_id and (select branch_id from employee where employee.user_id = B.user_id) = ' + str(branch_id) + ';'

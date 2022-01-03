@@ -10,7 +10,7 @@ class ChauffeurDashboard(View):
         cursor = connection.cursor()
         cursor.execute(
             'SELECT R.reservation_number, R.start_date, R.end_date, R.status, C.customer_name, E.employee_name, R.license_plate, R.isChaufAccepted FROM reservation R, employee E, customer C WHERE R.reserved_chauf_id = ' + str(chauffeur_id) + 
-            ' and C.user_id = R.reserver and E.user_id = R.checked_by;'
+            ' and C.user_id = R.reserver and E.user_id = R.checked_by and R.status = \'accepted\';'
         )
         desc = cursor.fetchall()
         context = {

@@ -46,6 +46,8 @@ try:
     result = cursor.execute("DROP TRIGGER IF EXISTS assert_availability_car")
     result = cursor.execute("DROP TRIGGER IF EXISTS assert_reservation_control")
     result = cursor.execute("DROP PROCEDURE IF EXISTS insert_user")
+    result = cursor.execute("DROP PROCEDURE IF EXISTS select_employees")
+    result = cursor.execute("DROP PROCEDURE IF EXISTS insert_employee")
 
 
     # create tables
@@ -492,38 +494,38 @@ try:
     result = cursor.execute("""insert into chauffeur values(110, "car", 20);""")
 
     # reservation
-    result = cursor.execute(
-        """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+    # result = cursor.execute(
+    #     """insert into reservation values(1, STR_TO_DATE("12-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "accepted", 3000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
 
-    result = cursor.execute(
-        """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "canceled", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("11-27-2021","%m-%d-%Y"), "not_accepted", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(4, STR_TO_DATE("10-17-2021","%m-%d-%Y"), STR_TO_DATE("10-27-2021","%m-%d-%Y"), "not_accepted", 120, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(5, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 450, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(6, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 56, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
-    
-    result = cursor.execute(
-        """insert into reservation values(7, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(8, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(9, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(10, STR_TO_DATE("11-19-2021","%m-%d-%Y"), STR_TO_DATE("12-26-2021","%m-%d-%Y"), "paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
-
-    result = cursor.execute(
-        """insert into reservation values(11, STR_TO_DATE("11-19-2021","%m-%d-%Y"), STR_TO_DATE("12-26-2021","%m-%d-%Y"), "paid", 190, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+    # result = cursor.execute(
+    #     """insert into reservation values(2, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "canceled", 70000, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(3, STR_TO_DATE("11-17-2021","%m-%d-%Y"), STR_TO_DATE("11-27-2021","%m-%d-%Y"), "not_accepted", 7, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(4, STR_TO_DATE("10-17-2021","%m-%d-%Y"), STR_TO_DATE("10-27-2021","%m-%d-%Y"), "not_accepted", 120, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(5, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 450, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(6, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 56, 100, 106, "true", "asdas", "Full Coverage", "06AY6527", null, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(7, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_accepted", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(8, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(9, STR_TO_DATE("9-17-2021","%m-%d-%Y"), STR_TO_DATE("12-27-2021","%m-%d-%Y"), "not_paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(10, STR_TO_DATE("11-19-2021","%m-%d-%Y"), STR_TO_DATE("12-26-2021","%m-%d-%Y"), "paid", 17, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
+    #
+    # result = cursor.execute(
+    #     """insert into reservation values(11, STR_TO_DATE("11-19-2021","%m-%d-%Y"), STR_TO_DATE("12-26-2021","%m-%d-%Y"), "paid", 190, 100, 106, "true", "asdasf", "Full Coverage", "34GL3100", 107, null);""")
 
     # vehicle_rate
     result = cursor.execute("""insert into vehicle_rate values(100, "06AY6527", "Very good car!", 5);""")
@@ -546,7 +548,7 @@ try:
     for each row
     begin 
     if NEW.isApproved = 1 then
-    update vehicle set status = "on_transfer"
+    update vehicle set status = "available"
     where vehicle.license_plate = NEW.requested_vehicle; end if;
     end;""")
 
