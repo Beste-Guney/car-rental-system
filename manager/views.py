@@ -486,11 +486,11 @@ class FilterView(View):
         #if plate is entered find the car
         if license:
             cursor.execute(
-                'create view filter_plate as select * from vehicle where license_plate like \'' + license + '%\''
+                'create view filter_plate as select * from vehicle where license_plate like \'' + license + '%\' and branch_id=\'' + str(branch_id) + '\';'
             )
         else:
             cursor.execute(
-                'create view filter_plate as select * from vehicle;'
+                'create view filter_plate as select * from vehicle where branch_id=\'' + str(branch_id) + '\';'
             )
          # filtering according to other conditions
         if int(age) != -1:
@@ -522,7 +522,7 @@ class FilterView(View):
             if int(kilometers) == 40000:
                 cursor.execute(
                             'create view filter_km as '
-                            'select * from filter_model where kilometers > 40000;'
+                            'select * from filter_model where kilometers >= 40000;'
                 )
             else:
                 upper_bound = int(kilometers) * 2
@@ -539,11 +539,11 @@ class FilterView(View):
 
         if int(high) == 0:
             cursor.execute(
-                        'create view filter_price as select * from filter_km where daily_rent_price > ' + str(low) + ';'
+                        'create view filter_price as select * from filter_km where price > ' + str(low) + ';'
             )
         else:
             cursor.execute(
-                        'create view filter_price as select * from filter_km where daily_rent_price between ' + str(low) + ' and ' + str(high) +';'
+                        'create view filter_price as select * from filter_km where price between ' + str(low) + ' and ' + str(high) +';'
             )
 
         if brand != 'empty':
@@ -563,7 +563,7 @@ class FilterView(View):
         vehicle_info = []
 
         for car in result:
-            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
+            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6], car[7]]
             vehicle_info.append(item_detail)
 
         cursor.execute('drop view filter_age')
@@ -617,11 +617,11 @@ class FilterForBuyingView(View):
         print(kilometers)
         if license:
             cursor.execute(
-                'create view filter6 as select * from vehicle where vehicle.status = \'onsale\' and license_plate like \'' + license + '%\''
+                'create view filter6 as (select * from vehicle where vehicle.status = \'onsale\' and license_plate like \'' + license + '%\');'
             )
         else:
             cursor.execute(
-                'create view filter6 as select * from vehicle where status = \'onsale\';'
+                'create view filter6 as (select * from vehicle where status = \'onsale\');'
             )
 
          # filtering according to other conditions
@@ -629,7 +629,7 @@ class FilterForBuyingView(View):
             print('here1')
             upper_bound = int(age) + 5
             cursor.execute(
-                        'create view filter1 as select * from filter6 where age between\'' + str(age) + '\'and \'' + str(upper_bound) +'\';'
+                        'create view filter1 as select * from filter6 where age between ' + str(age) + ' and ' + str(upper_bound) +';'
             )
 
         else:
@@ -647,14 +647,18 @@ class FilterForBuyingView(View):
                         'create view filter2 as '
                         'select * from filter1;'
             )
+        result = cursor.fetchall()
+        for res in result:
+            print(res)
 
+        print(kilometers)
         if int(kilometers) != -1:
             print('here3')
 
             if int(kilometers) == 40000:
                 cursor.execute(
                             'create view filter3 as '
-                            'select * from filter2 where kilometers > 40000;'
+                            'select * from filter2 where kilometers >= 40000;'
                 )
             else:
                 upper_bound = int(kilometers) * 2
@@ -662,6 +666,9 @@ class FilterForBuyingView(View):
                             'create view filter3 as select * from filter2 where kilometers between ' + str(kilometers) + ' and ' + str(upper_bound) +';'
                 )
 
+        result = cursor.fetchall()
+        for res in result:
+            print(res)
 
         else:
             cursor.execute(
@@ -669,14 +676,22 @@ class FilterForBuyingView(View):
                         'select * from filter2;'
             )
 
+        result = cursor.fetchall()
+        for res in result:
+            print(res)
+
         if int(high) == 0:
             cursor.execute(
-                        'create view filter4 as select * from filter3 where daily_rent_price > ' + str(low) + ';'
+                        'create view filter4 as select * from filter3 where price > ' + str(low) + ';'
             )
         else:
             cursor.execute(
-                        'create view filter4 as select * from filter3 where daily_rent_price between ' + str(low) + ' and ' + str(high) +';'
+                        'create view filter4 as select * from filter3 where price between ' + str(low) + ' and ' + str(high) +';'
             )
+
+        result = cursor.fetchall()
+        for res in result:
+            print(res)
 
         if brand != 'empty':
             cursor.execute(
@@ -689,21 +704,22 @@ class FilterForBuyingView(View):
 
         #gathering filtered vehicles
         cursor.execute(
-                'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate and vehicle.branch_id = ' + str(branch_id) + ';'
+                'select * from vehicle, filter5 where vehicle.license_plate = filter5.license_plate;'
         )
         result = cursor.fetchall()
         vehicle_info = []
 
         for car in result:
-            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6]]
+            item_detail = [car[0], car[1], car[2], car[3], car[4], car[5], car[6], car[7]]
+            print(item_detail)
             vehicle_info.append(item_detail)
 
-        cursor.execute('drop view filter1')
-        cursor.execute('drop view filter2')
-        cursor.execute('drop view filter3')
-        cursor.execute('drop view filter4')
-        cursor.execute('drop view filter5')
-        cursor.execute('drop view filter6')
+        cursor.execute('drop view filter6;')
+        cursor.execute('drop view filter1;')
+        cursor.execute('drop view filter2;')
+        cursor.execute('drop view filter3;')
+        cursor.execute('drop view filter4;')
+        cursor.execute('drop view filter5;')
         models, brands = models_and_brands()
 
         models, brands = models_and_brands()
