@@ -199,9 +199,12 @@ class EmployeeView(View):
         # fetching all employees at that branch
         cursor = connection.cursor()
         cursor.execute(
-            'select * from employee where branch_id=' + str(branch_id) + ' and user_id <>' + str(
-                request.session['logged_in_user']) + ';'
+            'call select_employees(' + str(branch_id) + ', ' + str(user_id) + ');'
         )
+        # cursor.execute(
+        #     'select * from employee where branch_id=' + str(branch_id) + ' and user_id <>' + str(
+        #         request.session['logged_in_user']) + ';'
+        # )
         result = cursor.fetchall()
 
         employee_list = []
@@ -263,12 +266,10 @@ class AddBranchEmployeeView(View):
             user_id = desc[0]
 
             # inserting into employee tables
-            print('insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
-                user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );'
-                  )
-            cursor.execute(
-                'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
-                    user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );')
+            cursor.execute('call insert_employee(' + str(user_id) + ', ' + str(salary) + ',\' ' + username + '\', ' + str(branch_id) + ');')
+            # cursor.execute(
+            #     'insert into employee(user_id, salary, employee_name, branch_id) values(\'' + str(
+            #         user_id) + '\',\'' + str(salary) + '\',\'' + username + '\',\'' + str(branch_id) + '\' );')
 
             cursor.execute(
                 'insert into branch_employee(user_id, years_of_work) values(' + str(
@@ -807,7 +808,7 @@ class StatisticsView(View):
             'approve': number_of_approvals,
             'deny': number_of_denials,
             'budget': budget,
-            'sum_salary': sum_salary,
+            'sum_salary': str(sum_salary),
             'total_car': total_cars,
             'month_info': result
         }

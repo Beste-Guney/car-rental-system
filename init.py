@@ -575,11 +575,23 @@ try:
            """)
 
     #stored procedures
+    #inserting user
     result = cursor.execute("""create procedure insert_user( in emailValue varchar(50), in passwordValue varchar(50), in addressValue varchar(50), in phone varchar(15))
-    begin 
+    begin
         insert into user(email, password, address, phone_number) values( emailValue, passwordValue, addressValue, phone);
     end;""")
 
+    #selecting employees of a branch
+    cursor.execute("""create procedure select_employees(in branch int, in manager int)
+    begin
+        select * from employee where branch_id= branch and user_id <> manager;
+    end""")
+
+    #inserting a new employee to a branch
+    cursor.execute("""create procedure insert_employee(in userId int , in sal numeric(8,2), in name varchar(20), in branch int)
+    begin 
+        insert into employee(user_id, salary, employee_name, branch_id) values(userId, sal, name, branch );
+    end""")
     connection.commit()
 
 except Error as e:
