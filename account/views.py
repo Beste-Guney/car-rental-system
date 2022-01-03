@@ -207,6 +207,7 @@ class LoginView(View):
                             return redirect('chauffeur:chauffeur_dashboard')
                         else:
                             request.session['user_type'] = 'damage_expert'
+                            return redirect('damage_expert:damage-expert-dashboard', expert_id=user_id)
                     else:
                         request.session['user_type'] = 'manager'
 

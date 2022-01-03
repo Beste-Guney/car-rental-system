@@ -170,10 +170,22 @@ class CreateRequest(View):
 
             sql = """SELECT branch_id FROM vehicle WHERE license_plate = "{}";""".format(license_plate)
             cursor.execute(sql)
-            from_branch = cursor.fetchall()
+            from_branch = cursor.fetchall()[0][0]
+            if int(from_branch) == int(to_branch):
+                cursor = connection.cursor()
+                sql = "SELECT * FROM request, (SELECT branch_id, branch_name FROM branch) AS from_branch_name, (SELECT branch_id, branch_name FROM branch) AS to_branch_name WHERE from_branch = from_branch_name.branch_id and to_branch = to_branch_name.branch_id and made_by_customer = {};".format(user_id)
+                cursor.execute(sql)
+                old_req = cursor.fetchall()
+                form = CreateRequestForm()
+                context = {
+                    'old_req': old_req,
+                    'form': form,
+                    'message': 'Error occured.'
+                }
+                return render(request, 'customerRequest.html', context)
             sql = "INSERT INTO request " \
                   "(req_id, made_by_customer, from_branch, to_branch, requested_vehicle, checked_by_employee, isApproved, reason) " \
-                  "VALUES (NULL, {}, {}, {}, '{}', NULL, NULL, '{}');".format(user_id, from_branch[0][0], to_branch,
+                  "VALUES (NULL, {}, {}, {}, '{}', NULL, NULL, '{}');".format(user_id, from_branch, to_branch,
                                                                               license_plate, reason)
             cursor.execute(sql)
             sql = "SELECT * FROM request, (SELECT branch_id, branch_name FROM branch) AS from_branch_name, (SELECT branch_id, branch_name FROM branch) AS to_branch_name WHERE from_branch = from_branch_name.branch_id and to_branch = to_branch_name.branch_id and made_by_customer = {};".format(user_id)
@@ -269,7 +281,7 @@ class MakeReservation(View):
             if start_date > end_date: 
                 return redirect('/customer/errorDate')
 
-            rental_period_in_days = abs((end_date - start_date).days);
+            rental_period_in_days = abs((end_date - start_date).days)
             cost = rental_period_in_days * daily_cost
 
             cursor = connection.cursor()

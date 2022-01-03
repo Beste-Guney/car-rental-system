@@ -5,7 +5,13 @@ from django import forms
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import connection
+import datetime
+from django.core.validators import MinValueValidator
 
+def present_or_future_date(value):
+    if value < datetime.date.today:
+        raise forms.ValidationError("The date cannot be in the past!")
+    return value
 
 class Pay(forms.Form):
     rates = [tuple([x, x]) for x in range(1, 6)]
@@ -101,8 +107,8 @@ class MakeReservationForm(forms.Form):
     reserver_id = forms.IntegerField(widget=forms.HiddenInput())
     daily_cost = forms.FloatField(widget=forms.HiddenInput())
 
-    start_date = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'DDDD/MM/YY', 'type': 'date'}))
-    end_date = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'DDDD/MM/YY', 'type': 'date'}))
+    start_date = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'DDDD/MM/YY', 'type': 'date'}), validators=[MinValueValidator(datetime.date.today)])
+    end_date = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'DDDD/MM/YY', 'type': 'date'}), validators=[MinValueValidator(datetime.date.today)])
     reason = forms.CharField(widget=forms.Textarea(attrs={'name': 'body', 'rows': 2, 'cols': 2}))
     license_plate = forms.CharField(widget=forms.HiddenInput())
 
