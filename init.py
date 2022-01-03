@@ -45,7 +45,7 @@ try:
     result = cursor.execute("DROP TABLE IF EXISTS user")
     result = cursor.execute("DROP TRIGGER IF EXISTS assert_availability_car")
     result = cursor.execute("DROP TRIGGER IF EXISTS assert_reservation_control")
-
+    result = cursor.execute("DROP PROCEDURE IF EXISTS insert_user")
 
 
     # create tables
@@ -75,7 +75,7 @@ try:
                 branch_id int not null auto_increment,
                 budget int,
                 branch_name varchar(20),
-                PRIMARY KEY (branch_id));""")
+                PRIMARY KEY (branch_id)) ENGINE=INNODB;""")
     print("Branch table created successfully ")
 
     result = cursor.execute("""create table employee(
@@ -89,7 +89,7 @@ try:
                 FOREIGN KEY (user_id) REFERENCES user(user_id)
                 on delete CASCADE 
                 on update CASCADE,
-                PRIMARY KEY (user_id));""")
+                PRIMARY KEY (user_id)) ENGINE=INNODB;""")
     print("Employee table created successfully")
 
     result = cursor.execute("""create table customer_discount(
@@ -97,7 +97,7 @@ try:
     	    discount_rate int,
     	    check (discount_rate in (0, 10, 20, 30)),
     		check (customer_status in ("Gold", "Silver", "Premium", "Normal")),
-    		primary key(customer_status));""")
+    		primary key(customer_status)) ENGINE=INNODB;""")
     print("Customer_Discount table created successfully")
 
     result = cursor.execute("""create table customer(
@@ -106,14 +106,13 @@ try:
                 nationality varchar(20),
                 customer_status varchar(10),
                 customer_name varchar(20),
-                check (customer_status in ("Gold", "Silver", "Premium", "Normal")),
                 FOREIGN KEY (user_id) REFERENCES user(user_id)
                 on delete CASCADE 
                 on update CASCADE,
                 FOREIGN KEY (customer_status) REFERENCES customer_discount(customer_status)
                 on delete set null 
                 on update CASCADE ,
-                PRIMARY KEY (user_id));""")
+                PRIMARY KEY (user_id)) ENGINE=INNODB;""")
     print("Customer table created successfully")
 
     result = cursor.execute("""create table manager(
@@ -122,13 +121,13 @@ try:
                 FOREIGN KEY (user_id) REFERENCES employee(user_id)
                 on delete CASCADE 
                 on update CASCADE,
-                PRIMARY KEY (user_id));""")
+                PRIMARY KEY (user_id)) ENGINE=INNODB;""")
     print("Manager table created successfully")
 
     result = cursor.execute("""create table model_brand(
             model varchar(15),
             brand varchar(20),
-            primary key(model,brand));""")
+            primary key(model,brand)) ENGINE=INNODB;""")
     print("Model_Brand table created successfully")
 
     result = cursor.execute("""create table vehicle(
@@ -154,7 +153,7 @@ try:
                 on update CASCADE ,
                 FOREIGN KEY (model,brand) REFERENCES model_brand(model,brand)
                 on delete CASCADE 
-                on update CASCADE );""")
+                on update CASCADE ) ENGINE=INNODB;""")
     print("Vehicle table created successfully")
 
     result = cursor.execute("""create table car(
@@ -164,7 +163,7 @@ try:
                 FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
                 on delete CASCADE 
                 on update CASCADE ,
-                PRIMARY KEY (license_plate) );""")
+                PRIMARY KEY (license_plate) ) ENGINE=INNODB;""")
     print("Car table created successfully")
 
     result = cursor.execute("""create table truck(
@@ -175,7 +174,7 @@ try:
                 FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
                 on delete CASCADE 
                 on update CASCADE,
-                PRIMARY KEY (license_plate));""")
+                PRIMARY KEY (license_plate)) ENGINE=INNODB;""")
     print("Truck table created successfully")
 
     result = cursor.execute("""create table motorcycle(
@@ -185,14 +184,14 @@ try:
                 FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
                 on delete CASCADE 
                 on update CASCADE ,
-                PRIMARY KEY (license_plate));""")
+                PRIMARY KEY (license_plate)) ENGINE=INNODB;""")
     print("Truck table created successfully")
 
     result = cursor.execute("""create table job_application(
                 application_id int not null auto_increment,
                 cv blob,
                 name varchar(20),
-                primary key (application_id));""")
+                primary key (application_id)) ENGINE=INNODB;""")
     print("Job_Application table created successfully")
 
     result = cursor.execute("""create table inspect(
@@ -204,7 +203,7 @@ try:
                 FOREIGN KEY (manager_id) REFERENCES manager(user_id)
                 on delete CASCADE 
                 on update CASCADE ,
-                PRIMARY KEY (manager_id, application_id));""")
+                PRIMARY KEY (manager_id, application_id)) ENGINE=INNODB;""")
     print("Job_Application table created successfully")
 
     result = cursor.execute("""create table branch_employee(
@@ -213,7 +212,7 @@ try:
                 FOREIGN KEY (user_id) REFERENCES employee(user_id)
                 on delete CASCADE 
                 on update CASCADE ,
-                PRIMARY KEY (user_id));""")
+                PRIMARY KEY (user_id)) ENGINE=INNODB;""")
     print("Job_Application table created successfully")
 
     result = cursor.execute("""create table damage_expertise(
@@ -222,13 +221,13 @@ try:
                 FOREIGN KEY (user_id) REFERENCES employee(user_id)
                 on delete cascade 
                 on update cascade,
-                PRIMARY KEY (user_id));""")
+                PRIMARY KEY (user_id)) ENGINE=INNODB;""")
     print("Damage_Expersite table created successfully")
 
     result = cursor.execute("""create table insurance(
                 insurance_price float,
                 insurance_type varchar(20),
-                primary key(insurance_type));""")
+                primary key(insurance_type)) ENGINE=INNODB;""")
     print("Insurance table created successfully")
 
     result = cursor.execute("""create table chauffeur(
@@ -238,7 +237,7 @@ try:
                 FOREIGN KEY (user_id) REFERENCES employee(user_id)
                 on delete cascade 
                 on update cascade ,
-                PRIMARY KEY (user_id) );""")
+                PRIMARY KEY (user_id) ) ENGINE=INNODB;""")
     print("Chauffeur table created successfully")
 
     # rental_period int(11) AS (DATEDIFF(start_date, end_date)),
@@ -270,7 +269,7 @@ try:
                 FOREIGN KEY (reserved_chauf_id) REFERENCES chauffeur(user_id)
                 on delete set null 
                 on update cascade,
-                PRIMARY KEY (reservation_number));""")
+                PRIMARY KEY (reservation_number)) ENGINE=INNODB;""")
     print("Reservation table created successfully")
 
     result = cursor.execute("""create table damage_report(
@@ -286,7 +285,7 @@ try:
                 FOREIGN KEY (issued_reservation) REFERENCES reservation(reservation_number)
                 on delete cascade 
                 on update cascade,
-                PRIMARY KEY (issue_id));""")
+                PRIMARY KEY (issue_id)) ENGINE=INNODB;""")
     print("Damage_Report table created successfully")
 
     result = cursor.execute("""create table request(
@@ -313,7 +312,7 @@ try:
                 FOREIGN KEY (checked_by_employee) REFERENCES branch_employee(user_id)
                 on delete set null 
                 on update cascade,
-                PRIMARY KEY (req_id));""")
+                PRIMARY KEY (req_id)) ENGINE=INNODB;""")
     print("Request table created successfully")
 
     result = cursor.execute("""create table vehicle_rate(
@@ -328,7 +327,7 @@ try:
                 FOREIGN KEY (license_plate) REFERENCES vehicle(license_plate)
                 on delete cascade 
                 on update cascade,
-                PRIMARY KEY (customer_id, license_plate));""")
+                PRIMARY KEY (customer_id, license_plate)) ENGINE=INNODB;""")
     print("Vehicle_rate table created successfully")
 
     result = cursor.execute("""create table branch_rate(
@@ -343,7 +342,7 @@ try:
                 FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
                 on delete cascade 
                 on update cascade ,
-                PRIMARY KEY (customer_id, branch_id));""")
+                PRIMARY KEY (customer_id, branch_id)) ENGINE=INNODB;""")
     print("Branch_rate table created successfully")
 
     result = cursor.execute("""	create table assign_check(
@@ -359,7 +358,7 @@ try:
                 FOREIGN KEY (assigned_vehicle_license_plate) REFERENCES vehicle(license_plate)
                 on delete cascade 
                 on update cascade ,
-                PRIMARY KEY (assigned_expertise_id, assigning_manager_id, assigned_vehicle_license_plate));""")
+                PRIMARY KEY (assigned_expertise_id, assigning_manager_id, assigned_vehicle_license_plate)) ENGINE=INNODB;""")
     print("Assign_check table created successfully")
 
     # insert tuples to tables
@@ -427,9 +426,9 @@ try:
     result = cursor.execute("""insert into employee values(106, 6100,"Ayse Fatma",1);""")
     result = cursor.execute("""insert into employee values(104, 15000,"Kaan Atesel",1);""")
     result = cursor.execute("""insert into employee values(107, 7000,"Hamza Erdogan",1);""")
-    result = cursor.execute("""insert into employee values(108, 10000,"Mehmet Aydin",1);""")
-    result = cursor.execute("""insert into employee values(109, 15000,"Melis Bayrak",1);""")
-    result = cursor.execute("""insert into employee values(110, 11111,"Mazimye Celik",1);""")
+    result = cursor.execute("""insert into employee values(108, 10000,"Mehmet Aydin",2);""")
+    result = cursor.execute("""insert into employee values(109, 15000,"Ahmet Bayrak",2);""")
+    result = cursor.execute("""insert into employee values(110, 11111,"Mazimye Celik",2);""")
 
     # customer
     result = cursor.execute(
@@ -442,7 +441,6 @@ try:
     # manager
     result = cursor.execute("""insert into manager values(104, 3);""")
     result = cursor.execute("""insert into manager values(108, 8);""")
-    result = cursor.execute("""insert into manager values(109, 12);""")
 
     # vehicle
     result = cursor.execute(
@@ -453,11 +451,24 @@ try:
         """insert into vehicle values("34GL3100", "available",200,"Polo","Volkswagen",170000,3,65000,"Manual",104,1);""")
     result = cursor.execute(
         """insert into vehicle values("06REK121", "onsale",200,"Polo","Volkswagen",120000,13,120000,"Manual",null,null);""")
+    result = cursor.execute(
+        """insert into vehicle values("06ATA122", "onsale",250,"A180","Mercedes",200000,5,20000,"Automatic",null,null);""")
+    result = cursor.execute(
+        """insert into vehicle values("06RBG536", "onsale",250,"218i","BMW",230000,5,63000,"Automatic",null,null);""")
+    result = cursor.execute(
+        """insert into vehicle values("06FOO536", "onsale",150,"Jetta","Volkswagen",130000,10,80000,"Automatic",null,null);""")
+    result = cursor.execute(
+        """insert into vehicle values("06BAR764", "onsale",270,"Passat","Volkswagen",210000,6,76000,"Automatic",null,null);""")
 
     # car
     result = cursor.execute("""insert into car values("06AY6527", "C");""")
     result = cursor.execute("""insert into car values("06TD1845", "D");""")
     result = cursor.execute("""insert into car values("34GL3100", "B");""")
+    result = cursor.execute("""insert into car values("06REK121", "B");""")
+    result = cursor.execute("""insert into car values("06ATA122", "B");""")
+    result = cursor.execute("""insert into car values("06RBG536", "C");""")
+    result = cursor.execute("""insert into car values("06FOO536", "C");""")
+    result = cursor.execute("""insert into car values("06BAR764", "D");""")
 
     # truck
 
@@ -469,6 +480,7 @@ try:
 
     # branch_employee
     result = cursor.execute("""insert into branch_employee values(106, 3);""")
+    result = cursor.execute("""insert into branch_employee values(109, 3);""")
 
     # damage_expertise
     result = cursor.execute("""insert into damage_expertise values(105, 10);""")
@@ -477,6 +489,7 @@ try:
 
     # chauffeur
     result = cursor.execute("""insert into chauffeur values(107, "car", 20);""")
+    result = cursor.execute("""insert into chauffeur values(110, "car", 20);""")
 
     # reservation
     result = cursor.execute(
