@@ -60,8 +60,11 @@ class PayVehicle(View):
         cost = reservation[0][3]
 
         today = date.today()
-        fee_time = abs((today - end_date).days)
-
+        if (((today - end_date).days) >= 0):
+            fee_time = ((today - end_date).days)
+        else:
+            fee_time = 0
+            
         if fee_time > 0:
             penalty = fee_time * 100
         else:

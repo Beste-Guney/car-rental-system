@@ -31,7 +31,7 @@ def getExpertInfo(self, request):
 class DamageExpertDashboard(View):
     def get(self, request, expert_id):
         user_id = request.session['logged_in_user']
-        sql = "SELECT * FROM reservation WHERE status = 'paid' and current_timestamp() > end_date and reservation_number not in (SELECT issued_reservation FROM damage_report);"
+        sql = "SELECT * FROM reservation WHERE status = 'paid' and reservation_number not in (SELECT issued_reservation FROM damage_report);"
         cursor = connection.cursor()
         cursor.execute(sql)
         paid_res = cursor.fetchall()
@@ -46,7 +46,7 @@ class DamageExpertDashboard(View):
         if form.is_valid():
             return redirect('damage_expert:damage-expert-review', res_no = form.cleaned_data['reservationNo'])
         print("DAMAGESOSSOROSEIRSIN")
-        sql = "SELECT * FROM reservation WHERE status = 'paid' and current_timestamp() > end_date and reservation_number not in (SELECT issued_reservation FROM damage_report); ;"
+        sql = "SELECT * FROM reservation WHERE status = 'paid' and reservation_number not in (SELECT issued_reservation FROM damage_report); ;"
         cursor = connection.cursor()
         cursor.execute(sql)
         paid_res = cursor.fetchall()
@@ -84,7 +84,7 @@ class ReviewReservation(View):
             }
             return render(request, 'damageExpertiseReview.html', context)
         user_id = request.session['logged_in_user']
-        sql = "SELECT * FROM reservation WHERE status = 'paid' and current_timestamp() > end_date;"
+        sql = "SELECT * FROM reservation WHERE status = 'paid';"
         cursor = connection.cursor()
         cursor.execute(sql)
         paid_res = cursor.fetchall()
@@ -102,7 +102,8 @@ class CheckAssigned(View):
         assigned = cursor.fetchall()
         context = {
             'user_id' : user_id,
-            'assigned' : assigned
+            'assigned' : assigned,
+            'message' : ""
         }
         return render(request, 'damageExpertiseAssignCheck.html', context)
     def post(self, request, expert_id):
@@ -117,6 +118,7 @@ class CheckAssigned(View):
         assigned = cursor.fetchall()
         context = {
             'user_id' : user_id,
-            'assigned' : assigned
+            'assigned' : assigned,
+            'message' : "Successfully checked."
         }
         return render(request, 'damageExpertiseAssignCheck.html', context)

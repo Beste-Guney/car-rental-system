@@ -3,9 +3,9 @@ from mysql.connector import Error
 
 try:
     connection = mysql.connector.connect(host='127.0.0.1',
-                                         database='rental3',
+                                         database='rental2',
                                          user='root',
-                                         password='root')
+                                         password='y]k;Rmv}6<2hyMWp')
 
 
     if connection.is_connected():
@@ -79,6 +79,7 @@ try:
                 budget int,
                 branch_name varchar(20),
                 PRIMARY KEY (branch_id)) ENGINE=INNODB;""")
+    result = cursor.execute("""create index branchname ON branch(branch_name);""")      
     print("Branch table created successfully ")
 
     result = cursor.execute("""create table employee(
@@ -225,6 +226,7 @@ try:
                 on delete cascade 
                 on update cascade,
                 PRIMARY KEY (user_id)) ENGINE=INNODB;""")
+          
     print("Damage_Expersite table created successfully")
 
     result = cursor.execute("""create table insurance(

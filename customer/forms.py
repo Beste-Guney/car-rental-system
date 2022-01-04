@@ -103,6 +103,7 @@ class MakeReservationForm(forms.Form):
     L1 = list(chauffeurs)
     L1.append(['NULL', 'None'])
     T1 = tuple(L1)
+    print(T1)
 
     reserver_id = forms.IntegerField(widget=forms.HiddenInput())
     daily_cost = forms.FloatField(widget=forms.HiddenInput())
