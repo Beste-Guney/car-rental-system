@@ -60,8 +60,11 @@ class PayVehicle(View):
         cost = reservation[0][3]
 
         today = date.today()
-        fee_time = abs((today - end_date).days)
-
+        if (((today - end_date).days) >= 0):
+            fee_time = ((today - end_date).days)
+        else:
+            fee_time = 0
+            
         if fee_time > 0:
             penalty = fee_time * 100
         else:
@@ -173,7 +176,9 @@ class CreateRequest(View):
             from_branch = cursor.fetchall()[0][0]
             if int(from_branch) == int(to_branch):
                 cursor = connection.cursor()
-                sql = "SELECT * FROM request, (SELECT branch_id, branch_name FROM branch) AS from_branch_name, (SELECT branch_id, branch_name FROM branch) AS to_branch_name WHERE from_branch = from_branch_name.branch_id and to_branch = to_branch_name.branch_id and made_by_customer = {};".format(user_id)
+                sql = "SELECT * FROM request, (SELECT branch_id, branch_name FROM branch) AS from_branch_name, " \
+                      "(SELECT branch_id, branch_name FROM branch) AS to_branch_name " \
+                      "WHERE from_branch = from_branch_name.branch_id and to_branch = to_branch_name.branch_id and made_by_customer = {};".format(user_id)
                 cursor.execute(sql)
                 old_req = cursor.fetchall()
                 form = CreateRequestForm()

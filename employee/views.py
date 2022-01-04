@@ -317,14 +317,25 @@ class FilterVehicles(View):
             )
 
         if int(high) == 0:
-            cursor.execute(
-                'create view filter4 as select * from filter3 where daily_rent_price > ' + str(low) + ';'
-            )
+            if int(low) == 0:
+                cursor.execute(
+                    'create view filter4 as '
+                    'select * from filter3;'
+                )
+            else:
+                cursor.execute(
+                    'create view filter4 as select * from filter3 where daily_rent_price > ' + str(low) + ';'
+                )
         else:
-            cursor.execute(
-                'create view filter4 as select * from filter3 where daily_rent_price between ' + str(
-                    low) + ' and ' + str(high) + ';'
-            )
+            if int(low) == 0:
+                cursor.execute(
+                    'create view filter4 as select * from filter3 where daily_rent_price < ' + str(high) + ';'
+                )
+            else:
+                cursor.execute(
+                    'create view filter4 as select * from filter3 where daily_rent_price between ' + str(
+                        low) + ' and ' + str(high) + ';'
+                )
 
         if brand != 'empty':
             cursor.execute(
@@ -347,12 +358,12 @@ class FilterVehicles(View):
             print(item_detail)
             vehicle_info.append(item_detail)
 
+        cursor.execute('drop view filter6')
         cursor.execute('drop view filter1')
         cursor.execute('drop view filter2')
         cursor.execute('drop view filter3')
         cursor.execute('drop view filter4')
         cursor.execute('drop view filter5')
-        cursor.execute('drop view filter6')
         models, brands = models_and_brands()
 
         return render(request, 'branchCarsEmployee.html',

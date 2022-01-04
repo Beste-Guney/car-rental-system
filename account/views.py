@@ -109,9 +109,6 @@ from customer.views import CustomerDashboard
 
 
 class RegisterCustomer(View):
-    # createUserTable()
-    # createCustomerTable()
-
     def post(self, request):
         form = CustomerCreationForm(request.POST)
         print(form.errors)
@@ -124,6 +121,9 @@ class RegisterCustomer(View):
             address = form.cleaned_data['address']
             state = form.cleaned_data['state']
             # birth = form.cleaned_data['birth_date']
+            license_number = form.cleaned_data['license_number']
+            license_type = form.cleaned_data['license_type']
+            received_date = form.cleaned_data['received_date']
 
             cursor = connection.cursor()
             cursor.execute(
@@ -143,6 +143,17 @@ class RegisterCustomer(View):
                 'insert into customer values(\'' + str(
                     user_id) + '\',\'' + '1999-08-21' + '\',\'' + state + '\',\'' + 'Normal' + '\',\'' + username + '\');'
             )
+
+            sql = """
+                        INSERT INTO `driving_license` 
+                        (`user_id`, `license_number`, `license_type`, `received_date`) 
+                        VALUES ('{}', '{}', '{}', '{}');
+                    """.format(user_id, license_number, license_type, received_date)
+            cursor3.execute(sql)
+
+            # cursor3.execute(
+            #     'insert into driving_license values( ' + str(user_id) + ', ' + str(license_number) + ',\'' + str(license_type) + '\',' + str(received_date) + ');')
+
             request.session['logged_in_user'] = user_id
             request.session['user_type'] = 'customer'
             return render(request, 'customerDashboard.html')
@@ -375,3 +386,62 @@ class RegisterDamageExpert(View):
             form = DamageExpertCreationForm()
             context = {'form': form}
             return render(request, 'damageExpertCreate.html', context)
+
+class RegisterManagerView(View):
+    def get(self, request):
+        form = ManagerCreationForm()
+        context = {'form': form}
+        return render(request, 'managerRegister.html', context)
+
+    def post(self, request):
+        form = ManagerCreationForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+            branch = form.cleaned_data['branch_name']
+            budget = form.cleaned_data['budget']
+            salary = form.cleaned_data['salary']
+
+            cursor = connection.cursor()
+            cursor.execute(
+                'call insert_user( \'' + str(email) + '\', \'' + str(password) + '\', \'' + str(
+                    address) + '\', \'' + str(phone_number) + '\');')
+
+            cursor.execute(
+                'insert into branch(budget, branch_name) values(' + str(
+                    budget) + ',\'' + str(branch) + '\');'
+            )
+            cursor.execute(
+                'select branch_id from branch where budget=' + str(budget) + ' and branch_name=\'' + branch + '\''
+            )
+            desc = cursor.fetchall()
+            desc = desc[0]
+            branch_id = desc[0]
+
+            cursor2 = connection.cursor()
+
+
+            cursor2.execute(
+                'select user_id from user where email=\'' + email + '\' and password=\'' + password + '\''
+            )
+            desc = cursor2.fetchall()
+            desc = desc[0]
+            user_id = desc[0]
+
+            # inserting into employee tables
+            cursor.execute('call insert_employee(' + str(user_id) + ', ' + str(salary) + ',\' ' + username + '\', ' + str(branch_id) + ');')
+
+            cursor.execute(
+                'insert into manager(user_id, years_of_management) values(' + str(
+                    user_id) + ',' + str(0) + ');'
+            )
+
+            return redirect('login_user')
+        else:
+            form = ManagerCreationForm()
+            context = {'form': form}
+            return render(request, 'managerRegister.html', context)
