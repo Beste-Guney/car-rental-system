@@ -3,9 +3,9 @@ from mysql.connector import Error
 
 try:
     connection = mysql.connector.connect(host='127.0.0.1',
-                                         database='rental3',
+                                         database='rental2',
                                          user='root',
-                                         password='root')
+                                         password='y]k;Rmv}6<2hyMWp')
 
 
     if connection.is_connected():
@@ -572,7 +572,7 @@ try:
     create trigger assert_availability_car before insert on reservation
     for each row 
     begin 
-    if exists(select * from reservation where  NEW.start_date >= start_date and NEW.end_date <= end_date and NEW.license_plate = reservation.license_plate) then
+    if exists(select * from reservation where  NEW.start_date > start_date and NEW.end_date < end_date and NEW.license_plate = reservation.license_plate) then
     SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'BIG Errorrrr';
     end if;
@@ -584,7 +584,7 @@ try:
            create trigger assert_reservation_control before insert on reservation
            for each row 
            begin 
-           if exists(select * from reservation where  NEW.start_date >= start_date and NEW.end_date <= end_date and NEW.reserver = reservation.reserver) then
+           if exists(select * from reservation where  NEW.start_date > start_date and NEW.end_date < end_date and NEW.reserver = reservation.reserver) then
            SIGNAL SQLSTATE '45000'
                SET MESSAGE_TEXT = 'BIG Errorrrr';
            end if;

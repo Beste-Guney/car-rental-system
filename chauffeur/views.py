@@ -34,6 +34,7 @@ def decline_request(request):
     #changing the status of reservation
     cursor = connection.cursor()
     cursor.execute('update reservation set isChaufAccepted = 0  where reservation_number = \'' + str(reservation_id) + '\';')
+    cursor.execute("update reservation set status = 'canceled'  where reservation_number = ' "+ str(reservation_id) + "';")
 
     data = {}
     return JsonResponse(data)

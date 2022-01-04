@@ -1,5 +1,5 @@
 from django.urls import path
-from customer.views import cancelReservation, OrderReservations, CustomerDashboard, MakeReservation, RateCar, CreateRequest, RateBranch, ReturnVehicle, PayVehicle, ListReservations, ReservationComplate, Error, DateError
+from customer.views import PenaltiesView, cancelReservation, OrderReservations, CustomerDashboard, MakeReservation, RateCar, CreateRequest, RateBranch, ReturnVehicle, PayVehicle, ListReservations, ReservationComplate, Error, DateError
 
 from django.contrib.auth.views import LogoutView
 
@@ -8,6 +8,7 @@ from django.contrib.auth.views import LogoutView
 app_name = 'customer'
 urlpatterns = [
     path('customerDashboard/', CustomerDashboard.as_view(), name='customer_dashboard'),
+    path('penalties/', PenaltiesView.as_view(), name='customer-penalties'),
     path('rateVehicle/', RateCar.as_view(), name='customer_rate_vehicle'),
     path('rateBranch/', RateBranch.as_view(), name='customer_rate_branch'),
     path('error/', Error.as_view(), name='customer_error'),
